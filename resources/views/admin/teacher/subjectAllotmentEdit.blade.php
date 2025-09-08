@@ -100,7 +100,7 @@
                                                         </div>
 
                                                         <div class="col-md-1 d-flex align-items-end">
-                                                            <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fa-solid fa-xmark"></i></button>
+                                                            <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fa-solid fa-xmark remove-row"></i></button>
                                                         </div>
                                                     </div>
                                                     @endforeach
@@ -122,8 +122,9 @@
             </div>
             @include('admin.includes.floatmsg')
             @include('admin.includes.formjs')
+           
 
-           <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('assignment-rows');
     const addRowBtn = document.getElementById('add-row');
@@ -135,7 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function toggleGroupSelect(row) {
         const classSelect = row.querySelector('.class-select');
         const groupSelect = row.querySelector('.group-select');
-        if (!classSelect || !groupSelect) return;
+        if (!classSelect || !groupSelect)
+            return;
 
         const classValue = parseInt(classSelect.value);
         if (classValue === 11 || classValue === 12) {
@@ -155,47 +157,85 @@ document.addEventListener('DOMContentLoaded', function () {
     // -----------------------------
     // Add new row
     // -----------------------------
-   // -----------------------------
-// Add new row
-// -----------------------------
-addRowBtn.addEventListener('click', function () {
-    const firstRow = container.querySelector('.assignment-row');
-    const newRow = firstRow.cloneNode(true);
+    // -----------------------------
+    // Add new row
+    // -----------------------------
+    addRowBtn.addEventListener('click', function () {
+        const firstRow = container.querySelector('.assignment-row');
+        const newRow = firstRow.cloneNode(true);
 
-    // Clear values in inputs/selects
-    newRow.querySelectorAll('input, select').forEach(el => {
-        if (el.name.includes('[]')) {
-            el.value = '';
+        // Clear values in inputs/selects
+        newRow.querySelectorAll('input, select').forEach(el => {
+            if (el.name.includes('[]')) {
+                el.value = '';
+            }
+        });
+
+        // Clear the allotment_id field so this is treated as a new entry
+        const allotmentIdInput = newRow.querySelector('input[name="allotment_ids[]"]');
+        if (allotmentIdInput) {
+            allotmentIdInput.value = '';
         }
+
+        container.appendChild(newRow);
+        toggleGroupSelect(newRow);
+
+        // Attach change listener for class -> group toggle
+        newRow.querySelector('.class-select').addEventListener('change', () => toggleGroupSelect(newRow));
     });
-
-    // Clear the allotment_id field so this is treated as a new entry
-    const allotmentIdInput = newRow.querySelector('input[name="allotment_ids[]"]');
-    if (allotmentIdInput) {
-        allotmentIdInput.value = '';
-    }
-
-    container.appendChild(newRow);
-    toggleGroupSelect(newRow);
-
-    // Attach change listener for class -> group toggle
-    newRow.querySelector('.class-select').addEventListener('change', () => toggleGroupSelect(newRow));
-});
 
     // -----------------------------
     // Remove row
     // -----------------------------
     container.addEventListener('click', function (e) {
-        if (e.target.classList.contains('remove-row')) {
-            const rows = container.querySelectorAll('.assignment-row');
-            if (rows.length > 1) {
-                e.target.closest('.assignment-row').remove();
-            } else {
-                alert('At least one allotment is required.');
-            }
-        }
-    });
+    if (e.target.classList.contains('remove-row')) {
+        const row = e.target.closest('.assignment-row');
+        const allotmentId = row.querySelector('input[name="allotment_ids[]"]').value;
 
+        $.confirm({
+            title: 'Confirm!',
+            content: 'Do you want to remove this allotment?',
+            buttons: {
+                confirm: {
+                    text: 'Yes, remove it!',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        if (allotmentId) {
+                            $.ajax({
+                                url: `${base_url}/subjectAllotmentDelete/${allotmentId}`,
+                                method: 'GET', // Or 'DELETE' if your route allows
+                                headers: {
+                                    'Accept': 'application/json'
+                                },
+                                success: function (data) {
+                                    if (data.status === 'success') {
+                                        row.remove();
+                                        $.alert('Allotment has been removed.');
+                                    } else {
+                                        $.alert('Error: ' + (data.message || 'Could not remove allotment.'));
+                                    }
+                                },
+                                error: function () {
+                                    $.alert('An unexpected error occurred.');
+                                }
+                            });
+                        } else {
+                            // Remove unsaved row
+                            row.remove();
+                            $.alert('Allotment has been removed.');
+                        }
+                    }
+                },
+                cancel: {
+                    text: 'Cancel',
+                    action: function () {
+                        // Do nothing
+                    }
+                }
+            }
+        });
+    }
+});
     // -----------------------------
     // AJAX form submission
     // -----------------------------
@@ -212,37 +252,38 @@ addRowBtn.addEventListener('click', function () {
             },
             body: formData
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Server error');
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                // Show success alert
-                const alertBox = document.createElement('div');
-                alertBox.className = 'alert alert-success';
-                alertBox.innerText = data.message;
-                form.prepend(alertBox);
+                .then(response => {
+                    if (!response.ok)
+                        throw new Error('Server error');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Show success alert
+                        const alertBox = document.createElement('div');
+                        alertBox.className = 'alert alert-success';
+                        alertBox.innerText = data.message;
+                        form.prepend(alertBox);
 
-                // Redirect after 1 second
-                setTimeout(() => {
-                    if (data.redirect) {
-                        window.location.href = data.redirect;
+                        // Redirect after 1 second
+                        setTimeout(() => {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            } else {
+                                window.location.href = '/subjectAllotmentList';
+                            }
+                        }, 1000);
                     } else {
-                        window.location.href = '/subjectAllotmentList';
+                        alert(data.message || 'An error occurred.');
                     }
-                }, 1000);
-            } else {
-                alert(data.message || 'An error occurred.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An unexpected error occurred: ' + error.message);
-        });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An unexpected error occurred: ' + error.message);
+                });
     });
 });
-</script>
+            </script>
 
 
     </body>

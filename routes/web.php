@@ -52,6 +52,8 @@ Route::get('/deleteTeacher/{id}', [AdminController::class, 'deleteTeacher']);
 Route::get('/subjectAllotmentList', [AdminController::class, 'subjectAllotmentList']);
 Route::get('/subjectAllotmentEdit/{teacherId}', [AdminController::class, 'subjectAllotmentEdit']);
 Route::post('/subjectAllotmentUpdate', [AdminController::class, 'subjectAllotmentUpdate']);
+Route::get('/subjectAllotmentDelete/{id}', [AdminController::class, 'subjectAllotmentDelete']);
+
 Route::view('/popup','popup');
 
 

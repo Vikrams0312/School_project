@@ -638,8 +638,22 @@ public function subjectAllotmentUpdate(Request $req) {
     }
 }
 
+public function subjectAllotmentDelete($id)
+{
+    try {
+        DB::table('subject_allotments')->where('id', $id)->delete();
 
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Allotment deleted successfully.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An error occurred: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
- 
 }
 
