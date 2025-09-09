@@ -45,7 +45,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>
-                                                        <a class="btn btn-sm btn-primary" href="{{url('/createSubject')}}">
+                                                        <a class="btn btn-sm btn-primary" href="{{url('/create-subject')}}">
                                                             <i class="bx bx-plus-circle me-1" ></i> Add New
                                                         </a>
                                                     </th>
@@ -68,7 +68,7 @@
                                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                                             </button>
                                                             <div class="dropdown-menu">
-                                                                <a class="dropdown-item" href="{{url('/editSubject/'.$d->id)}}" 
+                                                                <a class="dropdown-item" href="{{url('/edit-subject/'.$d->id)}}" 
                                                                    ><i class="bx bx-edit-alt me-1" ></i> Edit</a
                                                                 >
                                                                 <a class="dropdown-item cursor-pointer" data-id="{{$d->id}}"  onclick="return deleteSubject(this);"

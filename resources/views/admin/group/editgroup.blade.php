@@ -46,7 +46,7 @@
                                             <small class="text-muted float-end">Merged input group</small>
                                         </div>
                                         <div class="card-body">
-                                            <form method="post" action="{{url('/updateGroup')}}">
+                                            <form method="post" action="{{url('/update-group')}}">
                                                 @php ($d = $groups[0])
                                                 @csrf
                                                 <div class="row mb-3 d-none">

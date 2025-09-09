@@ -48,12 +48,13 @@
                                             <thead>
                                                 <tr>
                                                     <th>
-                                                        <a class="btn btn-sm btn-primary" href="{{url('/createTeacher')}}">
+                                                        <a class="btn btn-sm btn-primary" href="{{url('/create-teacher')}}">
                                                             <i class="bx bx-plus-circle me-1" ></i> Add New
                                                         </a>
                                                     </th>
                                                     <th>S.NO</th>
                                                     <th>Name</th>
+                                                    <th>Subject Allotment</th>
                                                     <th>Email</th>
                                                     <th>Mobile</th>
                                                     <th>Experience</th>
@@ -80,7 +81,7 @@
                                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                                             </button>
                                                             <div class="dropdown-menu">
-                                                                <a class="dropdown-item" href="{{url('/editTeacher/'.$d->id)}}" 
+                                                                <a class="dropdown-item" href="{{url('/edit-teacher/'.$d->id)}}" 
                                                                    ><i class="bx bx-edit-alt me-1" ></i> Edit</a>
                                                                 <a class="dropdown-item cursor-pointer" data-id="{{$d->id}}"  onclick="return deleteTeacher(this);">
                                                                     <i class="bx bx-trash me-1"></i> Delete</a>
@@ -89,6 +90,11 @@
                                                     </td>
                                                     <td>{{$sno++}}</td>
                                                     <td>{{$d->name}}</td>
+                                                    <td>
+                                                        <a class="btn btn-sm btn-primary text-white" href="{{ url('/subject-allotment-list/'.$d->id) }}">
+                                                            Subjects
+                                                        </a>
+                                                    </td>
                                                     <td>{{$d->email}}</td>
                                                     <td>{{$d->mobile}}</td>
                                                     <td>{{$d->experience}}</td>

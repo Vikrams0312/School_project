@@ -54,8 +54,29 @@
 
                                         </div>
                                         <div class="card-body">
-                                            <form method="post" action="{{url('/saveGroup')}}">
+                                            <form method="post" action="{{url('/save-group')}}">
                                                 @csrf
+                                                <div class="row mb-3">
+                                                    <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Class </label>
+                                                    <div class="col-sm-10">
+                                                        <div class="input-group input-group-merge">
+                                                            <span id="basic-icon-default-fullname2" class="input-group-text"
+                                                                  ><i class="bx bx-user"></i
+                                                                ></span>
+                                                            <input
+                                                                type="text"
+                                                                class="form-control"
+                                                                id="basic-icon-default-fullname"
+                                                                name="standard"
+                                                                required
+                                                                value="{{old('standard')}}"
+                                                                placeholder="Enter Class"
+                                                                aria-label="Enter Class"
+                                                                aria-describedby="basic-icon-default-fullname2"
+                                                                />
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="row mb-3">
                                                     <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Group name</label>
                                                     <div class="col-sm-10">
@@ -68,7 +89,7 @@
                                                                 class="form-control"
                                                                 id="basic-icon-default-fullname"
                                                                 name="group_name"
-                                                                required
+                                                                
                                                                 value="{{old('group_name')}}"
                                                                 placeholder="Enter Group Name"
                                                                 aria-label="Enter Group Name"
@@ -89,7 +110,7 @@
                                                                 id="basic-icon-default-company"
                                                                 class="form-control"
                                                                 name="group_short_name"
-                                                                required
+                                                                
                                                                 value="{{old('group_short_name')}}"
                                                                 placeholder="Enter Group Short Name"
                                                                 aria-label="Enter Group Short Name"
@@ -102,7 +123,7 @@
                                                     <div class="col-sm-10">
                                                         <button type="submit" class="btn btn-info">Save</button>
 
-                                                        <a href="{{url('/groupList')}}" class="btn btn-primary">Show list</a>
+                                                        <a href="{{url('/group-list')}}" class="btn btn-primary">Show list</a>
 
                                                     </div>
                                                 </div>

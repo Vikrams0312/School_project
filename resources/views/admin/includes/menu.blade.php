@@ -103,7 +103,7 @@ $url_segment = trim(Request::segment(1));
                     echo "active";
                 }
                 ?>">
-                    <a href="{{url('/studentList')}}" class="menu-link">
+                    <a href="{{url('/student-list')}}" class="menu-link">
                         <div data-i18n="Without menu">Student List</div>
                     </a>
                 </li>

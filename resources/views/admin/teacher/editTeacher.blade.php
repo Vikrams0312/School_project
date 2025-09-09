@@ -47,7 +47,7 @@
 
                                         </div>
                                         <div class="card-body">
-                                            <form method="post" action="{{url('/updateTeacher')}}">
+                                            <form method="post" action="{{url('/update-teacher')}}">
                                                 @csrf
                                                 @if ($errors->any())
                                                 <div class="alert alert-danger">

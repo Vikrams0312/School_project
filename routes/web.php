@@ -11,47 +11,40 @@ Route::get('/logout', [AdminController::class, 'logout']);
 Route::post('/loginauth', [AdminController::class, 'loginAuthentication']);
 Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
-Route::get('/createTeacher', [AdminController::class, 'create']);
+Route::get('/create-teacher', [AdminController::class, 'create']);
 
-Route::view('/classadd', 'admin/class/classadd');
-Route::get('/classlist', [AdminController::class, 'classlist']);
-Route::get('/classdelete/{id}', [AdminController::class, 'classdelete']);
-Route::post('/classinsert', [AdminController::class, 'classinsert']);
-Route::get('/classedit/{id}', [AdminController::class, 'classedit']); 
-Route::post('/classupdate', [AdminController::class, 'classupdate']);
-
-Route::view('/createGroup', 'admin/group/creategroup');
-Route::post('/saveGroup', [AdminController::class, 'createGroup']);
-Route::post('/updateGroup', [AdminController::class, 'updateGroup']);
-Route::get('/groupList', [AdminController::class, 'retriveGroup']);
-Route::get('/editGroup/{id}', [AdminController::class, 'editGroup']);
+Route::view('/create-group', 'admin/group/creategroup');
+Route::post('/save-group', [AdminController::class, 'createGroup']);
+Route::post('/update-group', [AdminController::class, 'updateGroup']);
+Route::get('/group-list', [AdminController::class, 'retriveGroup']);
+Route::get('/edit-group{id}', [AdminController::class, 'editGroup']);
 Route::get('/deleteGroup/{id}', [AdminController::class, 'deleteGroup']);
 
-Route::get('/createStudent', [AdminController::class, 'studentForm']);
-Route::post('/saveStudent', [AdminController::class, 'createStudent']);
-Route::get('/studentList', [AdminController::class, 'retriveStudent']);
-Route::get('/editStudent/{id}', [AdminController::class, 'editStudent']);
-Route::post('/updateStudent', [AdminController::class, 'updateStudent']);
+Route::get('/create-student', [AdminController::class, 'studentForm']);
+Route::post('/save-student', [AdminController::class, 'createStudent']);
+Route::get('/student-list', [AdminController::class, 'retriveStudent']);
+Route::get('/edit-student/{id}', [AdminController::class, 'editStudent']);
+Route::post('/update-student', [AdminController::class, 'updateStudent']);
 Route::get('/deleteStudent/{id}', [AdminController::class, 'deleteStudent']);
 
-Route::get('/createSubject', [AdminController::class, 'subjectForm']);
-Route::post('/saveSubject', [AdminController::class, 'createSubject']);
-Route::get('/subjectList', [AdminController::class, 'retriveSubject']);
-Route::get('/editSubject/{id}', [AdminController::class, 'editSubject']);
-Route::post('/updateSubject', [AdminController::class, 'updateSubject']);
+Route::get('/create-subject', [AdminController::class, 'subjectForm']);
+Route::post('/save-subject', [AdminController::class, 'createSubject']);
+Route::get('/subject-list', [AdminController::class, 'retriveSubject']);
+Route::get('/edit-subject/{id}', [AdminController::class, 'editSubject']);
+Route::post('/update-subject', [AdminController::class, 'updateSubject']);
 Route::get('/deleteSubject/{id}', [AdminController::class, 'deleteSubject']);
 
-Route::get('/createTeacher', [AdminController::class, 'createTeacher']);
-Route::post('/saveTeacher', [AdminController::class, 'saveTeacher']);
-Route::post('/updateTeacher', [AdminController::class, 'updateTeacher']);
-Route::get('/teacherList', [AdminController::class, 'retriveTeacher']);
-Route::get('/editTeacher/{id}', [AdminController::class, 'editTeacher']);
+Route::get('/create-teacher', [AdminController::class, 'createTeacher']);
+Route::post('/save-teacher', [AdminController::class, 'saveTeacher']);
+Route::post('/update-teacher', [AdminController::class, 'updateTeacher']);
+Route::get('/teacher-list', [AdminController::class, 'retriveTeacher']);
+Route::get('/edit-teacher/{id}', [AdminController::class, 'editTeacher']);
 Route::get('/deleteTeacher/{id}', [AdminController::class, 'deleteTeacher']);
 
 //teacher subject allotment
-Route::get('/subjectAllotmentList', [AdminController::class, 'subjectAllotmentList']);
-Route::get('/subjectAllotmentEdit/{teacherId}', [AdminController::class, 'subjectAllotmentEdit']);
-Route::post('/subjectAllotmentUpdate', [AdminController::class, 'subjectAllotmentUpdate']);
+Route::get('/subject-allotment-list/{teacher_id}', [AdminController::class, 'subjectAllotmentList']);
+Route::get('/edit-subject-allotment/{teacherId}', [AdminController::class, 'subjectAllotmentEdit']);
+Route::post('/update-subject-allotment', [AdminController::class, 'subjectAllotmentUpdate']);
 Route::get('/subjectAllotmentDelete/{id}', [AdminController::class, 'subjectAllotmentDelete']);
 
 Route::view('/popup','popup');

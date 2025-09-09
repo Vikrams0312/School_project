@@ -47,7 +47,7 @@
 
                                         </div>
                                         <div class="card-body">
-                                            <form method="post" action="{{url('/saveStudent')}}">
+                                            <form method="post" action="{{url('/save-student')}}">
                                                 @csrf
                                                 @if ($errors->any())
                                                 <div class="alert alert-danger">
@@ -498,7 +498,7 @@
                                                 <div class="row justify-content-end">
                                                     <div class="col-sm-10">
                                                         <button type="submit" class="btn btn-info">Save</button>
-                                                        <a href="{{url('/studentList')}}" class="btn btn-primary">Show list</a>
+                                                        <a href="{{url('/student-list')}}" class="btn btn-primary">Show list</a>
                                                     </div>
                                                 </div>
                                             </form>

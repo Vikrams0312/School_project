@@ -353,6 +353,7 @@ function deleteTeacher(element) {
     var id = $(element).attr('data-id');
 
     $.confirm({
+      
         title: 'Delete',
         content: 'Are you sure to delete "' + cat + '"?',
         useBootstrap: false,

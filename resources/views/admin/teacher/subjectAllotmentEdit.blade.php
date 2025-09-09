@@ -30,7 +30,7 @@
                                             <h5>Edit Subject Allotments for {{ $teacher->name }}</h5>
                                         </div>
                                         <div class="container">
-                                            <form id="allotment-form" action="{{ url('/subjectAllotmentUpdate') }}" method="POST">
+                                            <form id="allotment-form" action="{{ url('/update-subject-allotment') }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="teacher_id" value="{{ $teacher->id }}">
                                                 <div id="assignment-rows">
@@ -42,24 +42,30 @@
                                                             <label class="form-label">Class</label>
                                                             <select name="class_ids[]" class="form-select class-select" required>
                                                                 <option value="">-- Select Class --</option>
-                                                                @foreach($groups as $standard)
+                                                                @foreach($class_list as $standard)
                                                                 <option value="{{ $standard->standard }}" {{ $allotment->standard == $standard->standard ? 'selected' : '' }}>
                                                                     {{ $standard->standard }}
                                                                 </option>
                                                                 @endforeach
                                                             </select>
+
                                                         </div>
 
                                                         <div class="col-md-2">
                                                             <label class="form-label">Group Name</label>
-                                                            <select name="shortname_ids[]" class="form-select group-select">
+                                                            <select name="shortname_ids[]" class="form-select group-select" {{ ($allotment->standard == 11 || $allotment->standard == 12) ? '' : 'disabled' }}>
                                                                 <option value="">-- Select Group --</option>
                                                                 @foreach($groups as $shortname)
-                                                                <option value="{{ $shortname->id }}" {{ $allotment->group_name_id == $shortname->id ? 'selected' : '' }}>
+                                                                                                                       
+                                                                <option value="{{ $shortname->id }}" {{ $shortname->id == $allotment->group_name_id ? 'selected' : '' }}>
                                                                     {{ $shortname->group_short_name }}
                                                                 </option>
+                                      
                                                                 @endforeach
                                                             </select>
+
+
+
                                                         </div>
 
                                                         <div class="col-md-2">
@@ -122,167 +128,168 @@
             </div>
             @include('admin.includes.floatmsg')
             @include('admin.includes.formjs')
-           
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const container = document.getElementById('assignment-rows');
-    const addRowBtn = document.getElementById('add-row');
-    const form = document.getElementById('allotment-form');
 
-    // -----------------------------
-    // Function to toggle Group select
-    // -----------------------------
-    function toggleGroupSelect(row) {
-        const classSelect = row.querySelector('.class-select');
-        const groupSelect = row.querySelector('.group-select');
-        if (!classSelect || !groupSelect)
-            return;
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const container = document.getElementById('assignment-rows');
+                    const addRowBtn = document.getElementById('add-row');
+                    const form = document.getElementById('allotment-form');
 
-        const classValue = parseInt(classSelect.value);
-        if (classValue === 11 || classValue === 12) {
-            groupSelect.disabled = false;
-        } else {
-            groupSelect.disabled = true;
-            groupSelect.selectedIndex = 0;
-        }
-    }
+                    // -----------------------------
+                    // Function to toggle Group select
+                    // -----------------------------
+                    function toggleGroupSelect(row) {
+                        const classSelect = row.querySelector('.class-select');
+                        const groupSelect = row.querySelector('.group-select');
+                        if (!classSelect || !groupSelect)
+                            return;
 
-    // Initialize existing rows
-    container.querySelectorAll('.assignment-row').forEach(row => {
-        toggleGroupSelect(row);
-        row.querySelector('.class-select').addEventListener('change', () => toggleGroupSelect(row));
-    });
-
-    // -----------------------------
-    // Add new row
-    // -----------------------------
-    // -----------------------------
-    // Add new row
-    // -----------------------------
-    addRowBtn.addEventListener('click', function () {
-        const firstRow = container.querySelector('.assignment-row');
-        const newRow = firstRow.cloneNode(true);
-
-        // Clear values in inputs/selects
-        newRow.querySelectorAll('input, select').forEach(el => {
-            if (el.name.includes('[]')) {
-                el.value = '';
-            }
-        });
-
-        // Clear the allotment_id field so this is treated as a new entry
-        const allotmentIdInput = newRow.querySelector('input[name="allotment_ids[]"]');
-        if (allotmentIdInput) {
-            allotmentIdInput.value = '';
-        }
-
-        container.appendChild(newRow);
-        toggleGroupSelect(newRow);
-
-        // Attach change listener for class -> group toggle
-        newRow.querySelector('.class-select').addEventListener('change', () => toggleGroupSelect(newRow));
-    });
-
-    // -----------------------------
-    // Remove row
-    // -----------------------------
-    container.addEventListener('click', function (e) {
-    if (e.target.classList.contains('remove-row')) {
-        const row = e.target.closest('.assignment-row');
-        const allotmentId = row.querySelector('input[name="allotment_ids[]"]').value;
-
-        $.confirm({
-            title: 'Confirm!',
-            content: 'Do you want to remove this allotment?',
-            buttons: {
-                confirm: {
-                    text: 'Yes, remove it!',
-                    btnClass: 'btn-red',
-                    action: function () {
-                        if (allotmentId) {
-                            $.ajax({
-                                url: `${base_url}/subjectAllotmentDelete/${allotmentId}`,
-                                method: 'GET', // Or 'DELETE' if your route allows
-                                headers: {
-                                    'Accept': 'application/json'
-                                },
-                                success: function (data) {
-                                    if (data.status === 'success') {
-                                        row.remove();
-                                        $.alert('Allotment has been removed.');
-                                    } else {
-                                        $.alert('Error: ' + (data.message || 'Could not remove allotment.'));
-                                    }
-                                },
-                                error: function () {
-                                    $.alert('An unexpected error occurred.');
-                                }
-                            });
+                        const classValue = parseInt(classSelect.value);
+                        if (classValue === 11 || classValue === 12) {
+                            groupSelect.disabled = false;
                         } else {
-                            // Remove unsaved row
-                            row.remove();
-                            $.alert('Allotment has been removed.');
+                            groupSelect.disabled = false;
+                            groupSelect.value = "";
                         }
                     }
-                },
-                cancel: {
-                    text: 'Cancel',
-                    action: function () {
-                        // Do nothing
-                    }
-                }
-            }
-        });
-    }
-});
-    // -----------------------------
-    // AJAX form submission
-    // -----------------------------
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(form);
 
-        fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: formData
-        })
-                .then(response => {
-                    if (!response.ok)
-                        throw new Error('Server error');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Show success alert
-                        const alertBox = document.createElement('div');
-                        alertBox.className = 'alert alert-success';
-                        alertBox.innerText = data.message;
-                        form.prepend(alertBox);
+                    // Initialize existing rows
+                    container.querySelectorAll('.assignment-row').forEach(row => {
+                        toggleGroupSelect(row);
+                        row.querySelector('.class-select').addEventListener('change', () => toggleGroupSelect(row));
+                    });
 
-                        // Redirect after 1 second
-                        setTimeout(() => {
-                            if (data.redirect) {
-                                window.location.href = data.redirect;
-                            } else {
-                                window.location.href = '/subjectAllotmentList';
+                    // -----------------------------
+                    // Add new row
+                    // -----------------------------
+                    // -----------------------------
+                    // Add new row
+                    // -----------------------------
+                    addRowBtn.addEventListener('click', function () {
+                        const firstRow = container.querySelector('.assignment-row');
+                        const newRow = firstRow.cloneNode(true);
+
+                        // Clear values in inputs/selects
+                        newRow.querySelectorAll('input, select').forEach(el => {
+                            if (el.name.includes('[]')) {
+                                el.value = '';
                             }
-                        }, 1000);
-                    } else {
-                        alert(data.message || 'An error occurred.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An unexpected error occurred: ' + error.message);
+                        });
+
+                        // Clear the allotment_id field so this is treated as a new entry
+                        const allotmentIdInput = newRow.querySelector('input[name="allotment_ids[]"]');
+                        if (allotmentIdInput) {
+                            allotmentIdInput.value = '';
+                        }
+
+                        container.appendChild(newRow);
+                        toggleGroupSelect(newRow);
+
+                        // Attach change listener for class -> group toggle
+                        newRow.querySelector('.class-select').addEventListener('change', () => toggleGroupSelect(newRow));
+                    });
+
+                    // -----------------------------
+                    // Remove row
+                    // -----------------------------
+                    container.addEventListener('click', function (e) {
+                        if (e.target.classList.contains('remove-row')) {
+                            const row = e.target.closest('.assignment-row');
+                            const allotmentId = row.querySelector('input[name="allotment_ids[]"]').value;
+
+                            $.confirm({
+                                icon: 'fa fa-warning',
+                                title: 'Confirm!',
+                                content: 'Do you want to remove this allotment?',
+                                buttons: {
+                                    confirm: {
+                                        text: 'Yes, remove it!',
+                                        btnClass: 'btn-red',
+                                        action: function () {
+                                            if (allotmentId) {
+                                                $.ajax({
+                                                    url: `${base_url}/subjectAllotmentDelete/${allotmentId}`,
+                                                    method: 'GET', // Or 'DELETE' if your route allows
+                                                    headers: {
+                                                        'Accept': 'application/json'
+                                                    },
+                                                    success: function (data) {
+                                                        if (data.status === 'success') {
+                                                            row.remove();
+                                                            $.alert('Allotment has been removed.');
+                                                        } else {
+                                                            $.alert('Error: ' + (data.message || 'Could not remove allotment.'));
+                                                        }
+                                                    },
+                                                    error: function () {
+                                                        $.alert('An unexpected error occurred.');
+                                                    }
+                                                });
+                                            } else {
+                                                // Remove unsaved row
+                                                row.remove();
+                                                $.alert('Allotment has been removed.');
+                                            }
+                                        }
+                                    },
+                                    cancel: {
+                                        text: 'Cancel',
+                                        action: function () {
+                                            // Do nothing
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    // -----------------------------
+                    // AJAX form submission
+                    // -----------------------------
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        const formData = new FormData(form);
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        })
+                                .then(response => {
+                                    if (!response.ok)
+                                        throw new Error('Server error');
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        // Show success alert
+                                        const alertBox = document.createElement('div');
+                                        alertBox.className = 'alert alert-success';
+                                        alertBox.innerText = data.message;
+                                        form.prepend(alertBox);
+
+                                        // Redirect after 1 second
+                                        setTimeout(() => {
+                                            if (data.redirect) {
+                                                window.location.href = data.redirect;
+                                            } else {
+                                                window.location.href = '/subject-allotment-list';
+                                            }
+                                        }, 1000);
+                                    } else {
+                                        alert(data.message || 'An error occurred.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('An unexpected error occurred: ' + error.message);
+                                });
+                    });
                 });
-    });
-});
             </script>
 
 

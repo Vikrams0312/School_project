@@ -32,7 +32,7 @@
                             <h4 class="fw-bold py-1 mb-1"><span class="text-muted fw-light">Form/</span>Subject</h4>
                             
                             <hr class="my-2" />
-                            <form method="post" action="{{url('/saveSubject')}}">
+                            <form method="post" action="{{url('/save-subject')}}">
                                 <!-- Basic Layout & Basic with Icons -->
                                 <div class="row">
                                     <!-- Basic with Icons -->
@@ -125,7 +125,7 @@
                                                 <div class="row justify-content-end">
                                                     <div class="col-sm-10">
                                                         <button type="submit" class="btn btn-info">Save</button>
-                                                        <a href="{{url('/subjectList')}}" class="btn btn-primary">Show list</a>
+                                                        <a href="{{url('/subject-list')}}" class="btn btn-primary">Show list</a>
                                                     </div>
                                                 </div>
                                             </div>

@@ -29,7 +29,7 @@ class AdminController extends Controller {
         $user = DB::table('teachers')->where($where)->first();
 
         // Check if the user exists and verify the password
-        if ($user && $user->password ===  sha1($password)) { // Ideally, use Hash::check for hashed passwords
+        if ($user && $user->password === sha1($password)) { // Ideally, use Hash::check for hashed passwords
             $data = [
                 'user_email' => $user->email,
                 'user_name' => $user->name
@@ -41,97 +41,67 @@ class AdminController extends Controller {
             return back()->withErrors(['error' => 'Email or password is incorrect.'])->withInput();
         }
     }
+
     public function dashboard() {
         return view('admin/login/dashboard');
     }
-    public function create() {
-       
-    }
-    public function classlist(Request $req) {
-        $result['result'] = DB::table('class')->get();
-
-        return response()->view('admin/class/classlist', $result);
-    }
-        public function classupdate(Request $req) {
-        extract($req->post());
-        $data = [
-            'class' => $class
-        ];
-        $result = DB::table('class')
-                ->where('id', $id)
-                ->update($data);
-        if ($result) {
-            return redirect('classlist');
-        }
-    }
-        public function classedit($id) {
-        $result['result'] = DB::table('class')
-                ->where('id', $id)
-                ->get();
-        return view('admin/class/classedit', $result);
-    }
-    public function classdelete($id) {
-
-        DB::table('class')->where('id', $id)->delete();
-        return redirect('classlist');
-    }
-    public function classinsert(Request $req) {
-        $class = $req->input('class');
-        $data = [
-                'class' => $class
-            ];
-        $result = DB::table('class')->insert($data);
-        if ($result) {
-            return redirect('classadd');
-        } else {
-            echo 'not insert';
-        }
-    }
-    public function subjectForm() {
-        $result['group'] = DB::table('groups')->get();
-        return view('admin/subject/createSubject', $result);
-    }
 
     public function createSubject(Request $req) {
-        extract($_REQUEST);
+        // Validate inputs, allow group_id to be nullable
         $validatedData = $req->validate([
-            'subject_name' => 'required',
-            'standard' => 'required'
-                ], [
-            'student_name.required' => 'Student name is required.',
+            'subject_name' => 'required|string|max:255',
+            'standard' => 'required|integer',
+            'group_id' => 'nullable|integer'
         ]);
 
+        // Extract data safely from the request
+        $subject_name = $req->input('subject_name');
+        $standard = $req->input('standard');
+        $group_id = $req->input('group_id');
+
+        // Prepare data, set group_id to null if empty
         $data = [
             'subject_name' => $subject_name,
             'standard' => $standard,
-            'group_id' => $group_id
+            'group_id' => !empty($group_id) ? $group_id : null
         ];
-        $result1 = DB::table('subjects')->where('subject_name', $data['subject_name'])->first();
-        ;
+
+        // Check if the subject already exists in the same group
+        $result1 = DB::table('subjects')
+                ->where('subject_name', $data['subject_name'])
+                ->where('group_id', $data['group_id'])
+                ->first();
+
         if ($result1) {
-            return redirect()->back()->withErrors(['error' => 'This subject already exists in same group.'])->withInput();
+            return redirect()->back()
+                            ->withErrors(['error' => 'This subject already exists in the same group.'])
+                            ->withInput();
         } else {
             $result = DB::table('subjects')->insert($data);
+
             if ($result) {
-                return redirect('/createSubject');
+                return redirect('/create-subject')->with('success', 'Subject created successfully.');
             } else {
-                return redirect()->back()->withErrors(['error' => 'Something went wrong while inserting.'])->withInput();
+                return redirect()->back()
+                                ->withErrors(['error' => 'Something went wrong while inserting.'])
+                                ->withInput();
             }
         }
     }
 
     public function retriveSubject() {
         $result['subject'] = DB::table('subjects')
-                ->join('groups', 'subjects.group_id', '=', 'groups.id')
+                ->leftJoin('groups', 'subjects.group_id', '=', 'groups.id')
                 ->select('subjects.*', 'groups.group_short_name')
                 ->get();
-        return view('admin/subject/retriveSubject', $result);
+
+        return view('admin.subject.retriveSubject', $result);
     }
 
     public function editSubject($id) {
         $result['group'] = DB::table('groups')->get();
         $result['subject'] = DB::table('subjects')->where('id', $id)->get();
-        return view('admin/subject/editSubject', $result);
+        return view('admin/subject/edit-subject', $result);
     }
 
     public function deleteSubject($id) {
@@ -161,11 +131,11 @@ class AdminController extends Controller {
         $result = DB::table('subjects')->where('id', $id)->update($data);
 
         if ($result > 0) {
-            return redirect('/subjectList')->with('success', 'Subject updated successfully.');
+            return redirect('/subject-list')->with('success', 'Subject updated successfully.');
         } elseif ($result === 0) {
             // This means the update didn't affect any rows, possibly because the values are the same
             //echo json_encode(['status' => 0, 'message' => 'No rows were updated. The data might be identical.']);
-            return redirect('/subjectList');
+            return redirect('/subject-list');
         } else {
             return redirect()->back()->withErrors(['error' => 'Failed to update Subject. Please try again.']);
         }
@@ -173,26 +143,48 @@ class AdminController extends Controller {
 
     //department Request $req
     public function createGroup(Request $req) {
+        // Validate standard first
         $req->validate([
-            'group_name' => 'required',
-            'group_short_name' => 'required'
+            'standard' => 'required|integer|min:1|max:12'
         ]);
-        extract($_REQUEST);
-        $data = [
-            'group_name' => $group_name,
-            'group_short_name' => $group_short_name
-        ];
-        $result1 = DB::table('groups')->where($data)->get();
+
+        $standard = $req->standard;
+
+        // Conditional validation
+        if ($standard == 11 || $standard == 12) {
+            $req->validate([
+                'group_name' => 'required|string|max:255',
+                'group_short_name' => 'required|string|max:50'
+            ]);
+            $data = [
+                'standard' => $standard,
+                'group_name' => $req->group_name,
+                'group_short_name' => $req->group_short_name
+            ];
+        } else {
+            // For standards 1 to 10, group_name and group_short_name can be null or empty
+            $data = [
+                'standard' => $standard,
+                'group_name' => null,
+                'group_short_name' => null
+            ];
+        }
+
+        // Check if group already exists for this standard
+        $result1 = DB::table('groups')->where([
+                    'standard' => $data['standard'],
+                    'group_name' => $data['group_name'],
+                    'group_short_name' => $data['group_short_name']
+                ])->get();
+
         if (count($result1) > 0) {
-            return redirect()->back()->withErrors(['error' => 'This Group is already exist.'])->withInput();
-            //return back()->withErrors(['error' => 'This Department is Already Exists.']);
+            return redirect()->back()->withErrors(['error' => 'This Group already exists.'])->withInput();
         } else {
             $result = DB::table('groups')->insert($data);
             if ($result) {
-                //echo json_encode(['status' => 1, 'message' => 'Successfully saved']);
-                return redirect('/createGroup');
+                return redirect('/create-group')->with('success', 'Group created successfully.');
             } else {
-                echo json_encode(['status' => 0, 'message' => 'Somthing went wrong while inserting']);
+                return redirect()->back()->withErrors(['error' => 'Something went wrong while inserting'])->withInput();
             }
         }
     }
@@ -216,11 +208,11 @@ class AdminController extends Controller {
         ];
         $result = DB::table('groups')->where('id', $id)->update($data);
         if ($result > 0) {
-            return redirect('/groupList');
+            return redirect('/group-list');
         } elseif ($result === 0) {
             // This means the update didn't affect any rows, possibly because the values are the same
             //echo json_encode(['status' => 0, 'message' => 'No rows were updated. The data might be identical.']);
-            return redirect('/groupList');
+            return redirect('/group-list');
         } else {
             echo json_encode(['status' => 0, 'message' => 'failed']);
         }
@@ -293,7 +285,7 @@ class AdminController extends Controller {
         } else {
             $result = DB::table('students')->insert($data);
             if ($result) {
-                return redirect('/createStudent');
+                return redirect('/create-student');
             } else {
                 return redirect()->back()->withErrors(['error' => 'Something went wrong while inserting.'])->withInput();
             }
@@ -381,7 +373,7 @@ class AdminController extends Controller {
         } elseif ($result === 0) {
             // This means the update didn't affect any rows, possibly because the values are the same
             //echo json_encode(['status' => 0, 'message' => 'No rows were updated. The data might be identical.']);
-            return redirect('/studentList');
+            return redirect('/student-list');
         } else {
             return redirect()->back()->withErrors(['error' => 'Failed to update Subject. Please try again.']);
         }
@@ -398,78 +390,85 @@ class AdminController extends Controller {
 
     //teacher
     public function createTeacher() {
-         // Load all subjects
-        $subjects = DB::table('subjects')->get();
-
+        // Load all subjects
+        $subjects = DB::table('subjects')
+                ->get();
+        $groups = DB::table('groups')
+                ->select('id', 'group_short_name')
+                ->where('group_short_name', '!=', '')
+                ->distinct()
+                ->orderBy('group_short_name')
+                ->get();
         // Get distinct shortnames with their IDs
-        $groups = DB::table('groups')->get();
-        
-        return view('admin/teacher/createTeacher',compact('subjects','groups'));
+        $classes = DB::table('groups')
+                ->select('standard')
+                ->distinct()
+                ->orderBy('standard')
+                ->get();
+        return view('admin/teacher/createTeacher', compact('subjects', 'groups', 'classes'));
     }
 
-   public function saveTeacher(Request $req)
-{
-    $validatedData = $req->validate([
-        'teacher_name' => 'required|string|min:3|max:255',
-        'experience' => 'required|string|min:1|max:50',
-        'previous_work_station' => 'required|string|min:3|max:50',
-        'qualification' => 'required|string|min:1|max:50',
-        'designation' => 'required|string|min:1|max:50',
-        'mobile' => 'required|numeric|digits:10',
-        'password' => 'required|string|min:6',
-       
-        'join_date' => 'required|date',
-        'teacher_email' => 'required|email'
-    ]);
+    public function saveTeacher(Request $req) {
+        $validatedData = $req->validate([
+            'teacher_name' => 'required|string|min:3|max:255',
+            'experience' => 'required|string|min:1|max:50',
+            'previous_work_station' => 'required|string|min:3|max:50',
+            'qualification' => 'required|string|min:1|max:50',
+            'designation' => 'required|string|min:1|max:50',
+            'mobile' => 'required|numeric|digits:10',
+            'password' => 'required|string|min:6',
+            'join_date' => 'required|date',
+            'teacher_email' => 'required|email'
+        ]);
 
-    // Insert into teachers table
-    $teacher_id = DB::table('teachers')->insertGetId([
-        'name' => strtoupper($req->teacher_name),
-        'mobile' => $req->mobile,
-        'experience' => $req->experience,
-        'previous_work_station' => $req->previous_work_station,
-        'qualification' => $req->qualification,
-        'designation' => $req->designation,
-        'join_date' => $req->join_date,
-        'email' => $req->teacher_email,
-        'password' => sha1($req->password), // ✅ secure hashing
-    ]);
+        // Insert into teachers table
+        $teacher_id = DB::table('teachers')->insertGetId([
+            'name' => strtoupper($req->teacher_name),
+            'mobile' => $req->mobile,
+            'experience' => $req->experience,
+            'previous_work_station' => $req->previous_work_station,
+            'qualification' => $req->qualification,
+            'designation' => $req->designation,
+            'join_date' => $req->join_date,
+            'email' => $req->teacher_email,
+            'password' => sha1($req->password), // ✅ secure hashing
+        ]);
 
-    // Insert allowed standards into subject_allotments
+        // Insert allowed standards into subject_allotments
 
-if (!empty($teacher_id)) {
-    $class_ids      = $req->class_ids;
-    $shortname_ids  = $req->shortname_ids;
-    $subject_ids    = $req->subject_ids;
-    $sections       = $req->sections;
-    $teacher_types  = $req->teacher_types;
-    $academic_years = $req->academic_years;
+        if (!empty($teacher_id)) {
+            $class_ids = $req->class_ids;
+            $shortname_ids = $req->shortname_ids;
+            $subject_ids = $req->subject_ids;
+            $sections = $req->sections;
+            $teacher_types = $req->teacher_types;
+            $academic_years = $req->academic_years;
 
-    for ($i = 0; $i < count($class_ids); $i++) {
-        $class_id     = (int) $class_ids[$i];
-        $shortname_id = $class_id > 10 ? ($shortname_ids[$i] ?? null) : null;// ✅ only if > 10
-        $subject_id   = $subject_ids[$i] ?? null;
-        $section      = $sections[$i] ;
-        $teacher_type = $teacher_types[$i] ;
-        $academic_year= $academic_years[$i];
+            for ($i = 0; $i < count($class_ids); $i++) {
+                $class_id = (int) $class_ids[$i];
+                $shortname_id = $class_id > 10 ? ($shortname_ids[$i] ?? null) : null; // ✅ only if > 10
+                $subject_id = $subject_ids[$i] ?? null;
+                $section = $sections[$i];
+                $teacher_type = $teacher_types[$i];
+                $academic_year = $academic_years[$i];
 
-        $assignmentData = [
-            'teacher_id'    => $teacher_id,
-            'standard'      => $class_id,
-            'group_name_id'  => $shortname_id,
-            'subject_id'    => $subject_id,
-            'section'       => $section,
-            'teacher_type'  => $teacher_type,
-            'academic_year' => $academic_year,
-        ];
+                $assignmentData = [
+                    'teacher_id' => $teacher_id,
+                    'standard' => $class_id,
+                    'group_name_id' => $shortname_id,
+                    'subject_id' => $subject_id,
+                    'section' => $section,
+                    'teacher_type' => $teacher_type,
+                    'academic_year' => $academic_year,
+                ];
 
-        DB::table('subject_allotments')->insert($assignmentData);
+                DB::table('subject_allotments')->insert($assignmentData);
+            }
+        }
+
+
+        return redirect('/create-teacher')->with('success', 'Teacher created successfully.');
     }
-}
-
-
-    return redirect('/createTeacher')->with('success', 'Teacher created successfully.');
-}
 
     public function retriveTeacher() {
         $result['teacher'] = DB::table('teachers')
@@ -477,16 +476,15 @@ if (!empty($teacher_id)) {
         return view('admin/teacher/retriveTeacher', $result);
     }
 
-public function deleteTeacher($id) {
-    $result = DB::table('teachers')->where('id', $id)->delete();
-
-    if ($result) {
-        return response()->json(['status' => 1, 'message' => 'Teacher deleted successfully']);
-    } else {
-        return response()->json(['status' => 0, 'message' => 'Failed to delete teacher']);
+    public function deleteTeacher($id) {
+        $result1 = DB::table('teachers')->where('id', $id)->delete();
+        $result2 = DB::table('subject_allotments')->where('teacher_id', $id)->delete();
+        if ($result1 && $result2) {
+            return response()->json(['status' => 1, 'message' => 'Teacher deleted successfully']);
+        } else {
+            return response()->json(['status' => 0, 'message' => 'Failed to delete teacher']);
+        }
     }
-}
-
 
     public function editTeacher($id) {
         $result['teacher'] = DB::table('teachers')->where('id', $id)->get();
@@ -510,7 +508,6 @@ public function deleteTeacher($id) {
             'mobile.numeric' => 'Mobile number must be numeric.',
             'mobile.digits' => 'Mobile number must be exactly 10 digits.',
             'experience.required' => 'experience name is required.',
-
         ]);
         $id = $req->input('id');
         $data = [
@@ -522,49 +519,52 @@ public function deleteTeacher($id) {
             'designation' => $designation,
             'join_date' => $join_date,
             'email' => $teacher_email,
-            
-
-            
         ];
         $result = DB::table('teachers')->where('id', $id)->update($data);
 
         if ($result > 0) {
-            return redirect('/teacherList')->with('success', 'Teacher updated successfully.');
+            return redirect('/teacher-list')->with('success', 'Teacher updated successfully.');
         } elseif ($result === 0) {
             // This means the update didn't affect any rows, possibly because the values are the same
             //echo json_encode(['status' => 0, 'message' => 'No rows were updated. The data might be identical.']);
-            return redirect('/teacherList');
+            return redirect('/teacher-list');
         } else {
             return redirect()->back()->withErrors(['error' => 'Failed to update Subject. Please try again.']);
         }
     }
-    
-    public function subjectAllotmentList()
-{
-    $allotments = DB::table('subject_allotments as sa')
-        ->join('teachers as t', 'sa.teacher_id', '=', 't.id')
-        ->join('subjects as s', 'sa.subject_id', '=', 's.id')
-        ->leftJoin('groups as g', 'sa.group_name_id', '=', 'g.id')
-        ->select(
-            'sa.id',
-             'sa.teacher_id',
-            't.name as teacher_name',
-            'sa.standard',
-            's.subject_name',
-            'g.group_short_name',
-            'sa.section',
-            'sa.teacher_type',
-            'sa.academic_year'
-        )
-        ->orderBy('t.name')
-        ->get();
-//dd($allotments);
-    return view('admin.teacher.subjectAllotmentList', compact('allotments'));
-}
+
+    public function subjectAllotmentList($teacher_id) {
+        $allotments = DB::table('subject_allotments as sa')
+                ->join('teachers as t', 'sa.teacher_id', '=', 't.id')
+                ->leftJoin('subjects as s', 'sa.subject_id', '=', 's.id') // join by subject_id
+                ->leftJoin('groups as g', 'sa.group_name_id', '=', 'g.id')
+                ->select(
+                        'sa.id',
+                        'sa.teacher_id',
+                        't.name as teacher_name',
+                        'sa.standard',
+                        's.subject_name',
+                        'g.group_short_name',
+                        'sa.section',
+                        'sa.teacher_type',
+                        'sa.academic_year'
+                )
+                ->when($teacher_id, function ($query) use ($teacher_id) {
+                    $query->where('sa.teacher_id', $teacher_id);
+                })
+                ->orderBy('t.name')
+                ->get();
+
+        // Debug
+        // dd($allotments);
+
+        return view('admin.teacher.subjectAllotmentList', compact('allotments'));
+    }
 
 // Controller
-public function subjectAllotmentEdit($teacherId)
-{
+  // Controller
+public function subjectAllotmentEdit($teacherId) {
+    // Get the teacher's details
     $teacher = DB::table('teachers')->where('id', $teacherId)->first();
 
     // Load existing allotments for this teacher
@@ -572,88 +572,109 @@ public function subjectAllotmentEdit($teacherId)
         ->where('teacher_id', $teacherId)
         ->get();
 
-    // Get dropdown data
+    // Get list of all subjects
     $subjects = DB::table('subjects')->get();
-    $groups   = DB::table('groups')->get(); // for group_name_id
 
-    return view('admin.teacher.subjectAllotmentEdit', compact('teacher', 'allotments', 'subjects', 'groups'));
+    // Get distinct classes (standards) for the Class dropdown
+    $class_list = DB::table('groups')
+        ->select('standard')
+        ->distinct()
+        ->orderBy('standard')
+        ->get();
+
+    // Get list of groups for the Group Name dropdown
+    $groups = DB::table('groups')
+        ->select('id', 'group_short_name')
+        ->where('group_short_name', '!=', '')
+        ->orderBy('group_short_name')
+        ->get();
+
+    return view('admin.teacher.subjectAllotmentEdit', compact('teacher', 'allotments', 'subjects', 'groups', 'class_list'));
 }
 
-public function subjectAllotmentUpdate(Request $req) {
-    try {
-        $teacherId = $req->teacher_id;
-        $allotment_ids   = $req->allotment_ids ?? [];
-        $class_ids       = $req->class_ids;
-        $shortname_ids   = $req->shortname_ids ?? [];
-        $subject_ids     = $req->subject_ids;
-        $sections        = $req->sections;
-        $teacher_types   = $req->teacher_types;
-        $academic_years  = $req->academic_years;
+    public function subjectAllotmentUpdate(Request $req) {
+     
+        try {
+            $teacherId = $req->teacher_id;
+            $allotment_ids = $req->allotment_ids ?? [];
+            $class_ids = $req->class_ids;
+            $shortname_ids = $req->shortname_ids ?? [];
+            $subject_ids = $req->subject_ids;
+            $sections = $req->sections;
+            $teacher_types = $req->teacher_types;
+            $academic_years = $req->academic_years;
 
-        for ($i = 0; $i < count($class_ids); $i++) {
-            $class_id = (int) $class_ids[$i];
-            $shortname_id = ($class_id > 10 && isset($shortname_ids[$i])) ? $shortname_ids[$i] : null;
-            $allotment_id = $allotment_ids[$i] ?? null;
+            for ($i = 0; $i < count($class_ids); $i++) {
+                $class_id = (int) $class_ids[$i];
+                $shortname_id = null;
+                if ($class_id == 11 || $class_id == 12) {
+                    $shortname_id = isset($shortname_ids[$i]) && $shortname_ids[$i] != '' ? $shortname_ids[$i] : null;
+                }
 
-            if ($allotment_id) {
-                // Update by allotment ID, so group name will also be updated correctly
-                DB::table('subject_allotments')
-                    ->where('id', $allotment_id)
-                    ->update([
-                        'standard'       => $class_id,
-                        'subject_id'     => $subject_ids[$i],
-                        'group_name_id'  => $shortname_id,   // Correctly updated regardless of class
-                        'section'        => $sections[$i],
-                        'teacher_type'   => $teacher_types[$i],
-                        'academic_year'  => $academic_years[$i],
+                $allotment_id = $allotment_ids[$i] ?? null;
+
+                if ($allotment_id) {
+                    $data = [
+                        'standard' => $class_id,
+                        'subject_id' => $subject_ids[$i],
+                        'group_name_id' => $shortname_id, // Correctly updated regardless of class
+                        'section' => $sections[$i],
+                        'teacher_type' => $teacher_types[$i],
+                        'academic_year' => $academic_years[$i],
+                        'academic_year' => $academic_years[$i],
+                    ];
+                   
+                    // Update by allotment ID, so group name will also be updated correctly
+                  
+                      DB::table('subject_allotments')
+                      ->where('id', $allotment_id)
+                      ->update($data);
+                    
+                } else {
+                    // Insert new allotment
+                    DB::table('subject_allotments')->insert([
+                        'teacher_id' => $teacherId,
+                        'standard' => $class_id,
+                        'subject_id' => $subject_ids[$i],
+                        'group_name_id' => $shortname_id,
+                        'section' => $sections[$i],
+                        'teacher_type' => $teacher_types[$i],
+                        'academic_year' => $academic_years[$i],
                     ]);
-            } else {
-                // Insert new allotment
-                DB::table('subject_allotments')->insert([
-                    'teacher_id'     => $teacherId,
-                    'standard'       => $class_id,
-                    'subject_id'     => $subject_ids[$i],
-                    'group_name_id'  => $shortname_id,
-                    'section'        => $sections[$i],
-                    'teacher_type'   => $teacher_types[$i],
-                    'academic_year'  => $academic_years[$i],
+                }
+            }
+
+            if ($req->ajax() || $req->wantsJson()) {
+                return response()->json([
+                            'status' => 'success',
+                            'message' => 'Subject allotments updated successfully.',
+                            'redirect' => url("/subject-allotment-list/{$teacherId}")
                 ]);
             }
-        }
 
-        if ($req->ajax() || $req->wantsJson()) {
+            return redirect("/subject-allotment-list/{$teacherId}")->with('success', 'Subject allotments updated successfully.');
+        } catch (\Exception $e) {
+            if ($req->ajax() || $req->wantsJson()) {
+                return response()->json(['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()]);
+            }
+            return redirect()->back()->with('error', 'An error occurred.');
+        }
+    }
+
+    public function subjectAllotmentDelete($id) {
+        try {
+            DB::table('subject_allotments')->where('id', $id)->delete();
+
             return response()->json([
-                'status' => 'success',
-                'message' => 'Subject allotments updated successfully.',
-                'redirect' => url('/subjectAllotmentList')
+                        'status' => 'success',
+                        'message' => 'Allotment deleted successfully.'
             ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                        'status' => 'error',
+                        'message' => 'An error occurred: ' . $e->getMessage()
+                            ], 500);
         }
-
-        return redirect('/subjectAllotmentList')->with('success', 'Subject allotments updated successfully.');
-    } catch (\Exception $e) {
-        if ($req->ajax() || $req->wantsJson()) {
-            return response()->json(['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()]);
-        }
-        return redirect()->back()->with('error', 'An error occurred.');
     }
-}
-
-public function subjectAllotmentDelete($id)
-{
-    try {
-        DB::table('subject_allotments')->where('id', $id)->delete();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Allotment deleted successfully.'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'An error occurred: ' . $e->getMessage()
-        ], 500);
-    }
-}
 
 }
-

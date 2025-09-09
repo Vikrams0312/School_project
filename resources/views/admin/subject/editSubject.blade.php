@@ -32,7 +32,7 @@
                             <h4 class="fw-bold py-1 mb-1"><span class="text-muted fw-light">Form/</span>Subject</h4>
                             
                             <hr class="my-2" />
-                            <form method="post" action="{{url('/updateSubject')}}">
+                            <form method="post" action="{{url('/update-subject')}}">
                                 <!-- Basic Layout & Basic with Icons -->
                                 <div class="row">
                                     <!-- Basic with Icons -->

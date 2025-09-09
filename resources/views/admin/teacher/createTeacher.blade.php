@@ -9,10 +9,10 @@
     >
     <head>
         <title>Create Teacher</title>
-        
+
         @include('admin.includes.formcss')
-         <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
-   </head>
+        
+    </head>
 
     <body>
         <!-- Layout wrapper -->
@@ -34,7 +34,7 @@
                         <!-- Content -->
 
                         <div class="container-xxl flex-grow-1 container-p-y">
-                            <h4 class="fw-bold py-1 mb-1"><span class="text-muted fw-light">Form/</span>Teacher</h4>
+                            <h4 class="fw-bold py-1 mb-1">Teacher</h4>
                             <hr class="my-2" />
                             <!-- Basic Layout & Basic with Icons -->
                             <div class="row">
@@ -47,7 +47,7 @@
 
                                         </div>
                                         <div class="card-body">
-                                            <form method="post" action="{{url('/saveTeacher')}}">
+                                            <form method="post" action="{{url('/save-teacher')}}">
                                                 @csrf
                                                 @if ($errors->any())
                                                 <div class="alert alert-danger">
@@ -160,78 +160,81 @@
                                                     </div>
                                                 </div>
 
-                                           <div id="assignment-rows">
-                                               <div class="row mb-3 assignment-row">
+                                                <div id="assignment-rows">
+                                                    <div class="row mb-3 assignment-row">
 
-                                                    <!-- Class -->
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Class</label>
-                                                        <select name="class_ids[]" class="form-select" required>
-                                                            <option value="">-- Select Class --</option>
-                                                            @foreach($groups as $standard)
-                                                                <option value="{{ $standard->standard }}">{{ $standard->standard }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                        <!-- Class -->
+                                                        <div class="col-md-2">
+                                                            <label class="form-label">Class</label>
+                                                            <select name="class_ids[]" class="form-select" required>
+                                                                <option value="">-- Select Class --</option>
+                                                                @foreach($classes as $class)
+                                                                <option value="{{ $class->standard }}">{{ $class->standard }}</option>
+                                                                @endforeach
+                                                            </select>
 
-                                                    <!-- Group / Short Name -->
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Group Name</label>
-                                                        <select name="shortname_ids[]" class="form-select">
-                                                            <option value="">-- Select Group --</option>
-                                                            @foreach($groups as $shortname)
-                                                                <option value="{{ $shortname->id }}">{{ $shortname->group_short_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                        </div>
 
-                                                    <!-- Subject -->
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Subjects</label>
-                                                        <select class="form-select" name="subject_ids[]" required>
-                                                            <option value="">-- Select Subject --</option>
-                                                            @foreach($subjects as $subject)
+                                                        <!-- Group / Short Name -->
+                                                        <div class="col-md-2">
+                                                            <label class="form-label">Group Name</label>
+                                                            <select name="shortname_ids[]" class="form-select">
+                                                                <option value="">-- Select Group --</option>
+                                                                @foreach($groups as $group)
+                                                                    <option value="{{ $group->id }}">{{ $group->group_short_name }}</option>
+                                                                @endforeach
+                                                            </select>
+
+
+                                                        </div>
+
+                                                        <!-- Subject -->
+                                                        <div class="col-md-2">
+                                                            <label class="form-label">Subjects</label>
+                                                            <select class="form-select" name="subject_ids[]" required>
+                                                                <option value="">-- Select Subject --</option>
+                                                                @foreach($subjects as $subject)
                                                                 <option value="{{ $subject->id }}">{{ $subject->subject_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
 
-                                                    <!-- Section -->
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Section</label>
-                                                        <select name="sections[]" class="form-select" required>
-                                                            <option value="">-- Select Section --</option>
-                                                            <option value="NoSection">No Section</option>
-                                                            @foreach(range('A', 'G') as $section)
+                                                        <!-- Section -->
+                                                        <div class="col-md-2">
+                                                            <label class="form-label">Section</label>
+                                                            <select name="sections[]" class="form-select" required>
+                                                                <option value="">-- Select Section --</option>
+                                                                <option value="NoSection">No Section</option>
+                                                                @foreach(range('A', 'G') as $section)
                                                                 <option value="{{ $section }}">{{ $section }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
 
-                                                    <!-- Teacher Type -->
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Teacher Type</label>
-                                                        <select name="teacher_types[]" class="form-select" required>
-                                                            <option value="">-- Select Type --</option>
-                                                            <option value="CT">Class Teacher</option>
-                                                            <option value="ST">Subject Teacher</option>
-                                                        </select>
-                                                    </div>
+                                                        <!-- Teacher Type -->
+                                                        <div class="col-md-2">
+                                                            <label class="form-label">Teacher Type</label>
+                                                            <select name="teacher_types[]" class="form-select" required>
+                                                                <option value="">-- Select Type --</option>
+                                                                <option value="CT">Class Teacher</option>
+                                                                <option value="ST">Subject Teacher</option>
+                                                            </select>
+                                                        </div>
 
-                                                    <!-- Academic Year -->
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">Academic Year</label>
-                                                        <input type="text" id="year-range" class="form-control" name="academic_years[]" required />
+                                                        <!-- Academic Year -->
+                                                        <div class="col-md-2">
+                                                            <label class="form-label">Academic Year</label>
+                                                            <input type="text" id="year-range" class="form-control" name="academic_years[]" required />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <!-- Add Row Button -->
-                                            <div class="mb-3">
-                                                <button type="button" class="btn btn-sm btn-success" id="add-assignment-row">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
+                                                <!-- Add Row Button -->
+                                                <div class="mb-3">
+                                                    <button type="button" class="btn btn-sm btn-success" id="add-assignment-row">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
 
                                                 <div class="row mb-3">
                                                     <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Designation</label>
@@ -367,7 +370,7 @@
                                                 <div class="row justify-content-end">
                                                     <div class="col-sm-10">
                                                         <button type="submit" class="btn btn-info">Save</button>
-                                                        <a href="{{url('/teacherList')}}" class="btn btn-primary">Show list</a>
+                                                        <a href="{{url('/teacher-list')}}" class="btn btn-primary">Show list</a>
                                                     </div>
                                                 </div>
                                             </form>
@@ -398,74 +401,64 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
-<script>
-$(document).ready(function () {
-    $('#multiple-select-custom-field').select2({
-        theme: 'bootstrap4',
-        width: '100%',
-        placeholder: $('#multiple-select-custom-field').data('placeholder'),
-        closeOnSelect: false,
-        tags: false
-    });
-});
-</script>
-<script>
-        let rowIndex = 1;
+        <script>
+            $(document).ready(function () {
+                $('#multiple-select-custom-field').select2({
+                    theme: 'bootstrap4',
+                    width: '100%',
+                    placeholder: $('#multiple-select-custom-field').data('placeholder'),
+                    closeOnSelect: false,
+                    tags: false
+                });
+            });
+        </script>
+        <script>
+            let rowIndex = 1;
 
-        $('#add-assignment-row').on('click', function () {
-            let newRow = $('.assignment-row:first').clone();
+            $('#add-assignment-row').on('click', function () {
+                let newRow = $('.assignment-row:first').clone();
 
-            // Update the subject_ids name with new index
-            //newRow.find('select[name^="subject_ids"]').attr('name', `subject_ids[]`);
+                // Update the subject_ids name with new index
+                //newRow.find('select[name^="subject_ids"]').attr('name', `subject_ids[]`);
 
-            // Clear selected values
-            newRow.find('select').val('');
-            newRow.find('input').val('');
-            // Add remove button only if it doesn’t exist
-            if (newRow.find('.remove-row').length===0) {
-                newRow.append(`
-                 <div class="col-md-1 d-flex align-items-end">
-                     <button type="button" class="btn btn-sm btn-danger remove-row">
-                         <i class="fa-solid fa-xmark"></i> 
-                     </button>
-                 </div>
-             `);
-            }
-            $('#assignment-rows').append(newRow);
-            
-        });
+                // Clear selected values
+                newRow.find('select').val('');
+                newRow.find('input').val('');
+                // Add remove button only if it doesn’t exist
+                if (newRow.find('.remove-row').length === 0) {
+                    newRow.append(`
+                         <div class="col-md-1 d-flex align-items-end">
+                             <button type="button" class="btn btn-sm btn-danger remove-row">
+                                 <i class="fa-solid fa-xmark"></i> 
+                             </button>
+                         </div>
+                     `);
+                }
+                $('#assignment-rows').append(newRow);
 
-        // Remove row if "Remove" is clicked and more than 1 row exists
-        $(document).on('click', '.remove-row', function () {
-            if ($('.assignment-row').length > 1) {
-                $(this).closest('.assignment-row').remove();
-            }
-        });
-        document.addEventListener('change', function (e) {
-    if (e.target.matches('select[name="class_ids[]"]')) {
-        const row = e.target.closest('.assignment-row');
-        const classValue = parseInt(e.target.value);
-        const shortnameSelect = row.querySelector('select[name="shortname_ids[]"]');
+            });
 
-        if (classValue >= 1 && classValue <= 10) {
-            shortnameSelect.value = '';
-            shortnameSelect.disabled = true;
-        } else {
-            shortnameSelect.disabled = false;
-        }
-    }
-});
- </script>
-<script>
- // Apply Inputmask for 'yyyy-yyyy' with automatic dash
-    Inputmask({
-        mask: "9999-9999",  // format: yyyy-yyyy
-        placeholder: "20__-____", // shows guiding underscores
-        showMaskOnHover: false,   // only show mask while typing
-        showMaskOnFocus: true,
-        clearIncomplete: true      // prevent incomplete input
-    }).mask(document.getElementById("year-range"));
-</script>
+            // Remove row if "Remove" is clicked and more than 1 row exists
+            $(document).on('click', '.remove-row', function () {
+                if ($('.assignment-row').length > 1) {
+                    $(this).closest('.assignment-row').remove();
+                }
+            });
+            document.addEventListener('change', function (e) {
+                if (e.target.matches('select[name="class_ids[]"]')) {
+                    const row = e.target.closest('.assignment-row');
+                    const classValue = parseInt(e.target.value);
+                    const shortnameSelect = row.querySelector('select[name="shortname_ids[]"]');
+
+                    if (classValue >= 1 && classValue <= 10) {
+                        shortnameSelect.value = '';
+                        shortnameSelect.disabled = true;
+                    } else {
+                        shortnameSelect.disabled = false;
+                    }
+                }
+            });
+        </script>
 
     </body>
 </html>
