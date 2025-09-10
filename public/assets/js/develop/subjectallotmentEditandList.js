@@ -107,56 +107,63 @@ document.addEventListener('DOMContentLoaded', function () {
     // -----------------------------
     // Remove row
     // -----------------------------
-    container.addEventListener('click', function (e) {
-        if (e.target.classList.contains('remove-row')) {
-            const row = e.target.closest('.assignment-row');
-            const allotmentId = row.querySelector('input[name="allotment_ids[]"]').value;
+   container.addEventListener('click', function (e) {
+    let target = e.target;
 
-            $.confirm({
-                icon: 'fa fa-warning',
-                title: 'Confirm!',
-                content: 'Do you want to remove this allotment?',
-                buttons: {
-                    confirm: {
-                        text: 'Yes, remove it!',
-                        btnClass: 'btn-red',
-                        action: function () {
-                            if (allotmentId) {
-                                $.ajax({
-                                    url: `${base_url}/subjectAllotmentDelete/${allotmentId}`,
-                                    method: 'GET', // Or 'DELETE' if your route allows
-                                    headers: {
-                                        'Accept': 'application/json'
-                                    },
-                                    success: function (data) {
-                                        if (data.status === 'success') {
-                                            row.remove();
-                                            $.alert('Allotment has been removed.');
-                                        } else {
-                                            $.alert('Error: ' + (data.message || 'Could not remove allotment.'));
-                                        }
-                                    },
-                                    error: function () {
-                                        $.alert('An unexpected error occurred.');
+    // If clicked element is the icon, find the button
+    if (!target.classList.contains('remove-row')) {
+        target = target.closest('.remove-row');
+    }
+
+    if (target && target.classList.contains('remove-row')) {
+        const row = target.closest('.assignment-row');
+        const allotmentId = row.querySelector('input[name="allotment_ids[]"]').value;
+
+        $.confirm({
+            icon: 'fa fa-warning',
+            title: 'Confirm!',
+            content: 'Do you want to remove this allotment?',
+            buttons: {
+                confirm: {
+                    text: 'Yes, remove it!',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        if (allotmentId) {
+                            $.ajax({
+                                url: `${base_url}/subjectAllotmentDelete/${allotmentId}`,
+                                method: 'GET',
+                                headers: {
+                                    'Accept': 'application/json'
+                                },
+                                success: function (data) {
+                                    if (data.status === 'success') {
+                                        row.remove();
+                                        $.alert('Allotment has been removed.');
+                                    } else {
+                                        $.alert('Error: ' + (data.message || 'Could not remove allotment.'));
                                     }
-                                });
-                            } else {
-                                // Remove unsaved row
-                                row.remove();
-                                $.alert('Allotment has been removed.');
-                            }
-                        }
-                    },
-                    cancel: {
-                        text: 'Cancel',
-                        action: function () {
-                            // Do nothing
+                                },
+                                error: function () {
+                                    $.alert('An unexpected error occurred.');
+                                }
+                            });
+                        } else {
+                            row.remove();
+                            $.alert('Allotment has been removed.');
                         }
                     }
+                },
+                cancel: {
+                    text: 'Cancel',
+                    action: function () {
+                        // Do nothing
+                    }
                 }
-            });
-        }
-    });
+            }
+        });
+    }
+});
+
     // -----------------------------
     // AJAX form submission
     // -----------------------------
@@ -204,4 +211,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
     });
 });
-           
+         
+         
+$(document).ready(function () {
+    // Apply input mask to all academic_years[] fields
+    function applyAcademicYearMask() {
+        $('input[name="academic_years[]"]').inputmask("9999-9999", {
+            placeholder: "____-____",
+            showMaskOnFocus: true,
+            showMaskOnHover: false,
+            definitions: {
+                '9': {
+                    validator: "[0-9]",
+                }
+            },
+            clearIncomplete: true
+        });
+    }
+
+    // Initially apply the mask
+    applyAcademicYearMask();
+
+    // Reapply the mask after adding a new row
+    $('#add-row').on('click', function () {
+        // Use setTimeout to ensure the new row is in the DOM
+        setTimeout(function () {
+            applyAcademicYearMask();
+        }, 100);
+    });
+});

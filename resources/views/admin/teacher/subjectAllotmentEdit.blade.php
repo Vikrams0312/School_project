@@ -102,12 +102,12 @@
 
                                                         <div class="col-md-2">
                                                             <label class="form-label">Academic Year</label>
-                                                            <input type="text" class="form-control" name="academic_years[]" value="{{ $allotment->academic_year }}" required />
+                                                            <input type="text" class="form-control" placeholder="____-____" name="academic_years[]" value="{{ $allotment->academic_year }}" required />
                                                         </div>
 
                                                         <div class="col-md-1 d-flex align-items-end">
-                                                            <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fa-solid fa-xmark remove-row"></i></button>
-                                                        </div>
+                                                            <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fa-solid fa-xmark"></i></button>
+                                                        </div> 
                                                     </div>
                                                     @endforeach
                                                 </div>
@@ -129,5 +129,6 @@
             @include('admin.includes.floatmsg')
             @include('admin.includes.formjs')
             <script src="{{url('public/assets/js/develop/subjectallotmentEditandList.js')}}" type="text/javascript"></script>
+           
     </body>
 </html>
