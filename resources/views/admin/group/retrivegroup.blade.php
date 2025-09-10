@@ -51,6 +51,7 @@
                                                         </a>
                                                     </th>
                                                     <th>S.NO</th>
+                                                    <th>Class</th>
                                                     <th>Group</th>
                                                     <th>Short Name</th>
                                                     <th>Created At</th>
@@ -81,6 +82,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{$sno++}}</td>
+                                                    <td>{{$d->standard}}</td>
                                                     <td>{{$d->group_name}}</td>
                                                     <td>{{$d->group_short_name}}</td>
                                                     <td>{{$d->created_at}}</td>

@@ -4,11 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/xampp/htdocs/school/routes/web.php</file>
-            <file>file:/D:/xampp/htdocs/school/resources/views/admin/teacher/subjectAllotmentEdit.blade.php</file>
+            <file>file:/D:/xampp/htdocs/school/resources/views/admin/group/retrivegroup.blade.php</file>
+            <file>file:/D:/xampp/htdocs/school/resources/views/admin/group/creategroup.blade.php</file>
+            <file>file:/D:/xampp/htdocs/school/resources/views/admin/teacher/createTeacher.blade.php</file>
             <file>file:/D:/xampp/htdocs/school/app/Http/Controllers/AdminController.php</file>
-            <file>file:/D:/xampp/htdocs/school/resources/views/admin/teacher/subjectAllotmentList.blade.php</file>
-            <file>file:/D:/xampp/htdocs/school/resources/views/admin/teacher/editTeacher.blade.php</file>
-            <file>file:/D:/xampp/htdocs/school/resources/views/admin/login/login.blade.php</file>
         </group>
     </open-files>
 </project-private>

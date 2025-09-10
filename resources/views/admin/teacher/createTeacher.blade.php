@@ -401,64 +401,7 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
-        <script>
-            $(document).ready(function () {
-                $('#multiple-select-custom-field').select2({
-                    theme: 'bootstrap4',
-                    width: '100%',
-                    placeholder: $('#multiple-select-custom-field').data('placeholder'),
-                    closeOnSelect: false,
-                    tags: false
-                });
-            });
-        </script>
-        <script>
-            let rowIndex = 1;
-
-            $('#add-assignment-row').on('click', function () {
-                let newRow = $('.assignment-row:first').clone();
-
-                // Update the subject_ids name with new index
-                //newRow.find('select[name^="subject_ids"]').attr('name', `subject_ids[]`);
-
-                // Clear selected values
-                newRow.find('select').val('');
-                newRow.find('input').val('');
-                // Add remove button only if it doesn’t exist
-                if (newRow.find('.remove-row').length === 0) {
-                    newRow.append(`
-                         <div class="col-md-1 d-flex align-items-end">
-                             <button type="button" class="btn btn-sm btn-danger remove-row">
-                                 <i class="fa-solid fa-xmark"></i> 
-                             </button>
-                         </div>
-                     `);
-                }
-                $('#assignment-rows').append(newRow);
-
-            });
-
-            // Remove row if "Remove" is clicked and more than 1 row exists
-            $(document).on('click', '.remove-row', function () {
-                if ($('.assignment-row').length > 1) {
-                    $(this).closest('.assignment-row').remove();
-                }
-            });
-            document.addEventListener('change', function (e) {
-                if (e.target.matches('select[name="class_ids[]"]')) {
-                    const row = e.target.closest('.assignment-row');
-                    const classValue = parseInt(e.target.value);
-                    const shortnameSelect = row.querySelector('select[name="shortname_ids[]"]');
-
-                    if (classValue >= 1 && classValue <= 10) {
-                        shortnameSelect.value = '';
-                        shortnameSelect.disabled = true;
-                    } else {
-                        shortnameSelect.disabled = false;
-                    }
-                }
-            });
-        </script>
+        <script src="{{url('public/assets/js/develop/createTeacher.js')}}" type="text/javascript"></script>
 
     </body>
 </html>
