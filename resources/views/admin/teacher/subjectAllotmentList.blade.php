@@ -115,54 +115,7 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
-        <script>
-            function deleteAllotment(el) {
-                const allotmentId = $(el).data('id');
-
-                $.confirm({
-                    icon: 'fa fa-warning',
-                    title: 'Confirm Deletion',
-                    content: 'Are you sure you want to delete this allotment?',
-                    buttons: {
-                        confirm: {
-                            text: 'Yes, Delete!',
-                            btnClass: 'btn-red',
-                            action: function () {
-                                if (allotmentId) {
-                                    $.ajax({
-                                        url: `${base_url}/subjectAllotmentDelete/${allotmentId}`,
-                                        method: 'GET', // Or 'DELETE' if your route accepts it
-                                        headers: {
-                                            'Accept': 'application/json'
-                                        },
-                                        success: function (data) {
-                                            if (data.status === 'success') {
-                                                // Remove the row from the table
-                                                $(el).closest('tr').remove();
-                                                $.alert('Allotment deleted successfully.');
-                                            } else {
-                                                $.alert('Error: ' + (data.message || 'Could not delete allotment.'));
-                                            }
-                                        },
-                                        error: function () {
-                                            $.alert('An unexpected error occurred.');
-                                        }
-                                    });
-                                }
-                            }
-                        },
-                        cancel: {
-                            text: 'Cancel',
-                            action: function () {
-                                // Do nothing
-                            }
-                        }
-                    }
-                });
-
-                return false; // Prevent default action if it's a link
-            }
-        </script>
+        <script src="{{url('public/assets/js/develop/subjectallotmentEditandList.js')}}" type="text/javascript"></script>
 
     </body>
 </html>
