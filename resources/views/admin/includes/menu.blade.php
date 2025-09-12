@@ -3,11 +3,6 @@
     $url_segment = Request::segment(1);
 @endphp
 
-<div class="loader">
-    <div class="iback">
-        <img src="{{ url('public/assets/img/loader/spinner1.gif') }}">
-    </div>
-</div>
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
@@ -57,14 +52,24 @@
                 </li>
             </ul>
         </li>
-           <!-- Teacher List -->
+<!-- Teacher List -->
+<li class="menu-item {{ in_array($url_segment, ['teacher-list']) ? 'active open' : '' }}">
+    <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-layout"></i>
+        <div data-i18n="Teacher">Teacher</div>
+    </a>
+    <ul class="menu-sub">
         <li class="menu-item {{ $url_segment == 'teacher-list' ? 'active' : '' }}">
             <a href="{{ url('/teacher-list') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user"></i>
                 <div data-i18n="teacher-list">Teacher List</div>
             </a>
         </li>
-           <!-- Teacher List -->
+    </ul>
+</li>
+
+ <!-- Teacher List -->
+          
         <li class="menu-item {{ $url_segment == 'group-list' ? 'active' : '' }}">
             <a href="{{ url('/group-list') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-book"></i>

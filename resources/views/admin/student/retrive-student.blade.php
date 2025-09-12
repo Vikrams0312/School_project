@@ -34,9 +34,7 @@
                         <!-- Content -->
 
                         <div class="container-xxl flex-grow-1 container-p-y">
-                            <h4 class="fw-bold py-1 mb-1"><span class="text-muted fw-light">Table /</span> Student</h4>
-
-                            <hr class="my-2" />
+                            <h4 class="fw-bold py-1 mb-1"> Student</h4>
 
                             <!-- Bordered Table -->
                             <div class="card">

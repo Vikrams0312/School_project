@@ -95,7 +95,7 @@ class AdminController extends Controller {
                 ->select('subjects.*', 'groups.group_short_name')
                 ->get();
 
-        return view('admin.subject.retriveSubject', $result);
+        return view('admin.subject.retrive-subject', $result);
     }
 
     public function editSubject($id) {
@@ -191,12 +191,12 @@ class AdminController extends Controller {
 
     public function retriveGroup() {
         $result['groups'] = DB::table('groups')->get(); //->where('id',1)->get()
-        return view('admin/group/retrivegroup', $result);
+        return view('admin/group/retrive-group', $result);
     }
 
     public function editGroup($id) {
         $result['groups'] = DB::table('groups')->where('id', $id)->get();
-        return view('admin/group/editgroup', $result);
+        return view('admin/group/edit-group', $result);
     }
 
     public function updateGroup(Request $req) {
@@ -230,80 +230,79 @@ class AdminController extends Controller {
     //studentform
     public function studentForm() {
         $result['group'] = DB::table('groups')->get();
-        return view('admin/student/createStudent', $result);
+        return view('admin/student/create-student', $result);
     }
 
     public function createStudent(Request $req) {
-        extract($_REQUEST);
+    $validatedData = $req->validate([
+        'register_number' => 'required|numeric',
+        'student_name' => 'required|string|min:3|max:50',
+        'mobile' => 'required|numeric|digits:10',
+        'dob' => 'required|date|before:today',
+        'academic_year' => 'required|numeric',
+        'gender' => 'required|string'
+    ], [
+        'register_number.required' => 'Register number is required.',
+        'register_number.numeric' => 'Register number must be numeric.',
+        'student_name.required' => 'Student name is required.',
+        'student_name.min' => 'Student name must be at least 3 characters.',
+        'student_name.max' => 'Student name cannot exceed 50 characters.',
+        'mobile.required' => 'Mobile number is required.',
+        'mobile.numeric' => 'Mobile number must be numeric.',
+        'mobile.digits' => 'Mobile number must be exactly 10 digits.',
+        'dob.required' => 'Date of birth is required.',
+        'dob.date' => 'Invalid date format.',
+        'dob.before' => 'Date of birth must be before today.',
+        'academic_year.required' => 'Academic year is required.',
+        'academic_year.numeric' => 'Academic year must be numeric.',
+        'gender.required' => 'Gender is required.'
+    ]);
 
-        $validatedData = $req->validate([
-            'register_number' => 'required|numeric',
-            'student_name' => 'required|string|min:3|max:50',
-            'mobile' => 'required|numeric|digits:10',
-            'dob' => 'required|date|before:today',
-            'academic_year' => 'required|numeric'
-                ], [
-            // Custom error messages
-            'register_number.required' => 'Register number is required.',
-            'register_number.numeric' => 'Register number must be numeric.',
-            'register_number.unique' => 'This register number is already in use.',
-            'student_name.required' => 'Student name is required.',
-            'student_name.min' => 'Student name must be at least 3 characters.',
-            'student_name.max' => 'Student name cannot exceed 255 characters.',
-            'department_id.required' => 'Department is required.',
-            //'department_id.exists' => 'Selected department is invalid.',
-            'mobile.required' => 'Mobile number is required.',
-            'mobile.numeric' => 'Mobile number must be numeric.',
-            'mobile.digits' => 'Mobile number must be exactly 10 digits.',
-            'dob.required' => 'Date of birth is required.',
-            'dob.date' => 'Invalid date format.',
-            'dob.before' => 'Date of birth must be before today.',
-        ]);
-        $data = [
-            'register_number' => $register_number,
-            'name' => strtoupper($student_name),
-            'father_name' => strtoupper($father_name),
-            'mother_name' => strtoupper($mother_name),
-            'group_id' => $group_id,
-            'mobile' => $mobile,
-            'previous_school' => $previous_school,
-            'aadhar_number' => $aadhar_number,
-            'emies_number' => $emies_number,
-            'communication_address' => $communication_address,
-            'dob' => $dob,
-            'standard' => $standard,
-            'section' => $section,
-            'gender' => $gender,
-            'join_date' => $joined_date,
-            'email' => $student_email,
-            'academic_year' => $academic_year
-        ];
+    $data = [
+        'register_number' => $req->input('register_number'),
+        'name' => strtoupper($req->input('student_name')),
+        'father_name' => strtoupper($req->input('father_name')),
+        'mother_name' => strtoupper($req->input('mother_name')),
+        'group_id' => $req->input('group_id'),
+        'mobile' => $req->input('mobile'),
+        'previous_school' => $req->input('previous_school'),
+        'aadhar_number' => $req->input('aadhar_number'),
+        'emies_number' => $req->input('emies_number'),
+        'communication_address' => $req->input('communication_address'),
+        'dob' => $req->input('dob'),
+        'standard' => $req->input('standard'),
+        'section' => $req->input('section'),
+        'gender' => $req->input('gender'),
+        'join_date' => $req->input('joined_date'),
+        'email' => $req->input('student_email'),
+        'academic_year' => $req->input('academic_year')
+    ];
 
-        $Studentexist = DB::table('students')->where('register_number', $data['register_number'])->first();
-        if ($Studentexist) {
-            return redirect()->back()->withErrors(['error' => 'This student already exists in same register number.'])->withInput();
+    $Studentexist = DB::table('students')->where('register_number', $data['register_number'])->first();
+    if ($Studentexist) {
+        return redirect()->back()->withErrors(['error' => 'This student already exists with the same register number.'])->withInput();
+    } else {
+        $result = DB::table('students')->insert($data);
+        if ($result) {
+            return redirect('/create-student');
         } else {
-            $result = DB::table('students')->insert($data);
-            if ($result) {
-                return redirect('/create-student');
-            } else {
-                return redirect()->back()->withErrors(['error' => 'Something went wrong while inserting.'])->withInput();
-            }
+            return redirect()->back()->withErrors(['error' => 'Something went wrong while inserting.'])->withInput();
         }
     }
+}
 
     public function retriveStudent() {
         $result['student'] = DB::table('students')
                 ->join('groups', 'students.group_id', '=', 'groups.id')
                 ->select('students.*', 'groups.group_short_name')
                 ->get();
-        return view('admin/student/retriveStudent', $result);
+        return view('admin/student/retrive-student', $result);
     }
 
     public function editStudent($id) {
         $result['group'] = DB::table('groups')->get();
         $result['student'] = DB::table('students')->where('id', $id)->get();
-        return view('admin/student/editStudent', $result);
+        return view('admin/student/edit-student', $result);
     }
 
     public function updateStudent(Request $req) {
@@ -369,7 +368,7 @@ class AdminController extends Controller {
         //print_r($result);
 
         if ($result > 0) {
-            return redirect('/studentList')->with('success', 'Student updated successfully.');
+            return redirect('/student-list')->with('success', 'Student updated successfully.');
         } elseif ($result === 0) {
             // This means the update didn't affect any rows, possibly because the values are the same
             //echo json_encode(['status' => 0, 'message' => 'No rows were updated. The data might be identical.']);
@@ -405,7 +404,7 @@ class AdminController extends Controller {
                 ->distinct()
                 ->orderBy('standard')
                 ->get();
-        return view('admin/teacher/createTeacher', compact('subjects', 'groups', 'classes'));
+        return view('admin/teacher/create-teacher', compact('subjects', 'groups', 'classes'));
     }
 
     public function saveTeacher(Request $req) {
@@ -473,7 +472,7 @@ class AdminController extends Controller {
     public function retriveTeacher() {
         $result['teacher'] = DB::table('teachers')
                 ->get();
-        return view('admin/teacher/retriveTeacher', $result);
+        return view('admin/teacher/retrive-teacher', $result);
     }
 
     public function deleteTeacher($id) {
@@ -488,7 +487,7 @@ class AdminController extends Controller {
 
     public function editTeacher($id) {
         $result['teacher'] = DB::table('teachers')->where('id', $id)->get();
-        return view('admin/teacher/editTeacher', $result);
+        return view('admin/teacher/edit-teacher', $result);
     }
 
     public function updateTeacher(Request $req) {
@@ -558,7 +557,7 @@ class AdminController extends Controller {
         // Debug
         // dd($allotments);
 
-        return view('admin.teacher.subjectAllotmentList', compact('allotments'));
+        return view('admin.teacher.list-subject-allotment', compact('allotments'));
     }
 
 // Controller
@@ -589,7 +588,7 @@ public function subjectAllotmentEdit($teacherId) {
         ->orderBy('group_short_name')
         ->get();
 
-    return view('admin.teacher.subjectAllotmentEdit', compact('teacher', 'allotments', 'subjects', 'groups', 'class_list'));
+    return view('admin.teacher.edit-subject-allotment', compact('teacher', 'allotments', 'subjects', 'groups', 'class_list'));
 }
 
     public function subjectAllotmentUpdate(Request $req) {

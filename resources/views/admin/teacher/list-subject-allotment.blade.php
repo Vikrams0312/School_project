@@ -35,9 +35,7 @@
                         <!-- Content -->
 
                         <div class="container-xxl flex-grow-1 container-p-y">
-                            <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Teacher /</span>  Subject Allotment List </h4>
-
-                            <hr class="my-5" />
+                            <h4 class="fw-bold py-3 mb-2"><span class="text-muted fw-light">Teacher /</span>  Subject Allotment List </h4>
 
                             <!-- Bordered Table -->
                             <div class="card">
