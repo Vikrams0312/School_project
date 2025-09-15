@@ -61,14 +61,9 @@
                                                                 ></span>
                                                             <select type="text" class="form-select" name="standard" required=""/>
                                                             <option >SELECT STANDARD</option>                                                                                                                        
-                                                            <option value="">LKG</option>                                                            
-                                                            <option value="">UKG</option>                                                            
-                                                            @php                                                                
-                                                            $numbers = range(1, 12);
-                                                            @endphp
-                                                            @foreach ($numbers as $standard)
-                                                            <option value="{{ $standard }}">{{ $standard }}</option>
-                                                            @endforeach                                                            
+                                                            @foreach($standards as $dt)                                                            
+                                                            <option value="{{$dt->standard}}">{{$dt->standard}}</option>                                                           
+                                                            @endforeach                                                           
                                                             </select>
                                                         </div>
                                                         @error('standard')
@@ -86,7 +81,7 @@
                                                                 ></span>
                                                             <select type="text" class="form-select" name="group_id" />
                                                             <option value="">SELECT</option>
-                                                            @foreach($group as $dt)                                                            
+                                                            @foreach($groupShortNames as $dt)                                                            
                                                             <option value="{{$dt->id}}">{{$dt->group_short_name}}</option>                                                           
                                                             @endforeach
                                                             </select>

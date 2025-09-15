@@ -33,9 +33,8 @@
                         <!-- Content -->
 
                         <div class="container-xxl flex-grow-1 container-p-y">
-                            <h4 class="fw-bold py-1 mb-1"><span class="text-muted fw-light">Table /</span> Group</h4>
+                            <h4 class="fw-bold py-1 mb-1">Group</h4>
 
-                            <hr class="my-2" />
 
                             <!-- Bordered Table -->
                             <div class="card">

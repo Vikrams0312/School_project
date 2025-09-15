@@ -194,13 +194,8 @@
                                                                 ></span>
                                                             <select type="text" class="form-select" name="standard" required=""/>
                                                             <option >SELECT STANDARD</option>                                                                                                                        
-                                                            <option value="">LKG</option>                                                            
-                                                            <option value="">UKG</option>                                                            
-                                                            @php                                                                
-                                                            $numbers = range(1, 12);
-                                                            @endphp
-                                                            @foreach ($numbers as $standard)
-                                                            <option value="{{ $standard }}">{{ $standard }}</option>
+                                                            @foreach ($standards as $standard)
+                                                            <option value="{{ $standard->standard }}">{{ $standard->standard }}</option>
                                                             @endforeach                                                            
                                                             </select>
                                                         </div>
@@ -258,7 +253,7 @@
                                                                 ></span>
                                                             <select type="text" class="form-select" name="group_id" />
                                                             <option value="">SELECT</option>
-                                                            @foreach($group as $dt)                                                            
+                                                            @foreach($groupShortNames as $dt)                                                            
                                                             <option value="{{$dt->id}}">{{$dt->group_short_name}}</option>                                                           
                                                             @endforeach
                                                             </select>
@@ -429,14 +424,14 @@
                                                                   ><i class="bx bx-calendar-check"></i
                                                                 ></span>
                                                             <input
-                                                                type="number"
+                                                                type="text"
                                                                 class="form-control"                                                                
-                                                                onkeyup="return numberValidation(this, 4)"
+                                                                
                                                                 value="{{old('academic_year')}}"
                                                                 name="academic_year"
                                                                 id="academic_year"
                                                                 required
-                                                                placeholder="Enter academic year "
+                                                                placeholder="____-____ "
                                                                 aria-label="Enter academic year "
                                                                 aria-describedby="basic-icon-default-fullname2"                                                               
                                                                 />
@@ -529,6 +524,12 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
+        
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
+        <script>
+
+</script>
     </body>
 </html>
 

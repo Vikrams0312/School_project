@@ -13,11 +13,11 @@ Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
 Route::get('/create-teacher', [AdminController::class, 'create']);
 
-Route::view('/create-group', 'admin/group/creategroup');
+Route::view('/create-group', 'admin/group/create-group');
 Route::post('/save-group', [AdminController::class, 'createGroup']);
 Route::post('/update-group', [AdminController::class, 'updateGroup']);
 Route::get('/group-list', [AdminController::class, 'retriveGroup']);
-Route::get('/edit-group{id}', [AdminController::class, 'editGroup']);
+Route::get('/edit-group/{id}', [AdminController::class, 'editGroup']);
 Route::get('/deleteGroup/{id}', [AdminController::class, 'deleteGroup']);
 
 Route::get('/create-student', [AdminController::class, 'studentForm']);
@@ -42,6 +42,8 @@ Route::get('/edit-teacher/{id}', [AdminController::class, 'editTeacher']);
 Route::get('/deleteTeacher/{id}', [AdminController::class, 'deleteTeacher']);
 
 //teacher subject allotment
+Route::get('/create-subject-allotment', [AdminController::class,'subjectAllotment']);
+Route::post('/save-subject-allotments', [AdminController::class, 'saveSubjectAllotments']);
 Route::get('/subject-allotment-list/{teacher_id}', [AdminController::class, 'subjectAllotmentList']);
 Route::get('/edit-subject-allotment/{teacherId}', [AdminController::class, 'subjectAllotmentEdit']);
 Route::post('/update-subject-allotment', [AdminController::class, 'subjectAllotmentUpdate']);

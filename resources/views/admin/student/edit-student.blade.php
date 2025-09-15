@@ -447,14 +447,14 @@
                                                                   ><i class="bx bx-calendar-check"></i
                                                                 ></span>
                                                             <input
-                                                                type="number"
+                                                                type="text"
                                                                 class="form-control"                                                                
-                                                                onkeyup="return numberValidation(this, 4)"
+                                                                
                                                                 value="{{$d->academic_year}}"
                                                                 name="academic_year"
                                                                 id="academic_year"
                                                                 required
-                                                                placeholder="Enter academic year "
+                                                                placeholder="____-____"
                                                                 aria-label="Enter academic year "
                                                                 aria-describedby="basic-icon-default-fullname2"                                                               
                                                                 />

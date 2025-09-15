@@ -160,81 +160,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div id="assignment-rows">
-                                                    <div class="row mb-3 assignment-row">
 
-                                                        <!-- Class -->
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Class</label>
-                                                            <select name="class_ids[]" class="form-select" required>
-                                                                <option value="">-- Select Class --</option>
-                                                                @foreach($classes as $class)
-                                                                <option value="{{ $class->standard }}">{{ $class->standard }}</option>
-                                                                @endforeach
-                                                            </select>
-
-                                                        </div>
-
-                                                        <!-- Group / Short Name -->
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Group Name</label>
-                                                            <select name="shortname_ids[]" class="form-select">
-                                                                <option value="">-- Select Group --</option>
-                                                                @foreach($groups as $group)
-                                                                    <option value="{{ $group->id }}">{{ $group->group_short_name }}</option>
-                                                                @endforeach
-                                                            </select>
-
-
-                                                        </div>
-
-                                                        <!-- Subject -->
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Subjects</label>
-                                                            <select class="form-select" name="subject_ids[]" required>
-                                                                <option value="">-- Select Subject --</option>
-                                                                @foreach($subjects as $subject)
-                                                                <option value="{{ $subject->id }}">{{ $subject->subject_name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        <!-- Section -->
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Section</label>
-                                                            <select name="sections[]" class="form-select" required>
-                                                                <option value="">-- Select Section --</option>
-                                                                <option value="NoSection">No Section</option>
-                                                                @foreach(range('A', 'G') as $section)
-                                                                <option value="{{ $section }}">{{ $section }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        <!-- Teacher Type -->
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Teacher Type</label>
-                                                            <select name="teacher_types[]" class="form-select" required>
-                                                                <option value="">-- Select Type --</option>
-                                                                <option value="CT">Class Teacher</option>
-                                                                <option value="ST">Subject Teacher</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <!-- Academic Year -->
-                                                        <div class="col-md-2">
-                                                            <label class="form-label">Academic Year</label>
-                                                            <input type="text" id="year-range" class="form-control" name="academic_years[]" required />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Add Row Button -->
-                                                <div class="mb-3">
-                                                    <button type="button" class="btn btn-sm btn-success" id="add-assignment-row">
-                                                        <i class="fas fa-plus"></i>
-                                                    </button>
-                                                </div>
 
                                                 <div class="row mb-3">
                                                     <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Designation</label>
@@ -401,7 +327,7 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
-        <script src="{{url('public/assets/js/develop/createTeacher.js')}}" type="text/javascript"></script>
+       
 
     </body>
 </html>

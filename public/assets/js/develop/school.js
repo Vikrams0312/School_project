@@ -594,3 +594,27 @@ function deleteSubject(element) {
     });
     return false;
 }
+function applyAcademicYearMask() {
+    $('#academic_year').inputmask("9999-9999", {
+        placeholder: "____-____",
+        showMaskOnFocus: true,
+        showMaskOnHover: false,
+        definitions: {
+            '9': {
+                validator: "[0-9]", // Only digits allowed
+            }
+        },
+        clearIncomplete: true
+    });
+}
+
+$(document).ready(function () {
+    applyAcademicYearMask();
+        // Reapply the mask after adding a new row
+    $('#add-assignment-row').on('click', function () {
+        // Use setTimeout to ensure the new row is in the DOM
+        setTimeout(function () {
+            applyAcademicYearMask();
+        }, 100);
+    });
+});
