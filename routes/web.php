@@ -49,6 +49,15 @@ Route::get('/edit-subject-allotment/{teacherId}', [AdminController::class, 'subj
 Route::post('/update-subject-allotment', [AdminController::class, 'subjectAllotmentUpdate']);
 Route::get('/subjectAllotmentDelete/{id}', [AdminController::class, 'subjectAllotmentDelete']);
 
+
+//designation
+Route::get('/create-designation', [AdminController::class, 'createDesignation']);
+Route::post('/save-designation', [AdminController::class, 'saveDesignation']);
+Route::get('designation-list', [AdminController::class, 'designationList']);
+Route::get('/delete-designation/{id}', [AdminController::class, 'deleteDesignation']);
+Route::get('/edit-designation/{id}', [AdminController::class, 'editDesignation']);
+Route::post('/update-designation/{id}', [AdminController::class, 'updateDesignation']);
+
 Route::view('/popup','popup');
 
 

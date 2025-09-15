@@ -45,24 +45,78 @@ class AdminController extends Controller {
     public function dashboard() {
         return view('admin/login/dashboard');
     }
-public function subjectForm() {
-    // Get distinct standards with the smallest id for each
-    $standards = DB::table('groups')
-        ->select(DB::raw('MIN(id) as id'), 'standard')
-        ->groupBy('standard')
-        ->orderBy('standard')
-        ->get();
 
-    // Get distinct group short names with the smallest id for each
-    $groupShortNames = DB::table('groups')
-        ->select(DB::raw('MIN(id) as id'), 'group_short_name')
-        ->whereNotNull('group_short_name')
-        ->groupBy('group_short_name')
-        ->orderBy('group_short_name')
-        ->get();
+    public function createDesignation() {
+        return view('admin/designation/create-designation');
+    }
 
-    return view('admin.subject.create-subject', compact('standards', 'groupShortNames'));
-}
+    public function saveDesignation(Request $request) {
+        $request->validate([
+            'designation_name' => 'required|string|max:255|unique:designations,designation'
+        ]);
+
+        DB::table('designations')->insert([
+            'designation' => $request->input('designation_name')
+        ]);
+
+        return back()->with('success', 'Designation added successfully!');
+    }
+
+    public function designationList(Request $request) {
+        // Fetch designation list
+        $designations = DB::table('designations')->get();
+        return view('admin.designation.designation-list', compact('designations'));
+    }
+
+    public function deleteDesignation($id) {
+        $deleted = DB::table('designations')->where('id', $id)->delete();
+
+        if ($deleted) {
+            return response()->json(['status' => 1, 'message' => 'Success']);
+        } else {
+            return response()->json(['status' => 0, 'message' => 'Failed']);
+        }
+    }
+
+    public function editDesignation($id) {
+        $designations = DB::table('designations')->where('id', $id)->first();
+        return view('admin/designation/edit-designation', compact('designations'));
+    }
+
+    public function updateDesignation(Request $request, $id) {
+
+        $request->validate([
+            'designation_name' => 'required|string|max:255',
+        ]);
+
+        DB::table('designations')
+                ->where('id', $id)
+                ->update([
+                    'designation' => $request->input('designation_name'),
+        ]);
+
+        return redirect('/designation-list')->with('success', 'Designation updated successfully!');
+    }
+
+    public function subjectForm() {
+        // Get distinct standards with the smallest id for each
+        $standards = DB::table('groups')
+                ->select(DB::raw('MIN(id) as id'), 'standard')
+                ->groupBy('standard')
+                ->orderBy('standard')
+                ->get();
+
+        // Get distinct group short names with the smallest id for each
+        $groupShortNames = DB::table('groups')
+                ->select(DB::raw('MIN(id) as id'), 'group_short_name')
+                ->whereNotNull('group_short_name')
+                ->groupBy('group_short_name')
+                ->orderBy('group_short_name')
+                ->get();
+
+        return view('admin.subject.create-subject', compact('standards', 'groupShortNames'));
+    }
+
     public function createSubject(Request $req) {
         // Validate inputs, allow group_id to be nullable
         $validatedData = $req->validate([
@@ -250,91 +304,91 @@ public function subjectForm() {
 
     //studentform
     public function studentForm() {
-            // Get distinct standards with the smallest id for each
-    $standards = DB::table('groups')
-        ->select(DB::raw('MIN(id) as id'), 'standard')
-        ->groupBy('standard')
-        ->orderBy('standard')
-        ->get();
+        // Get distinct standards with the smallest id for each
+        $standards = DB::table('groups')
+                ->select(DB::raw('MIN(id) as id'), 'standard')
+                ->groupBy('standard')
+                ->orderBy('standard')
+                ->get();
 
-    // Get distinct group short names with the smallest id for each
-    $groupShortNames = DB::table('groups')
-        ->select(DB::raw('MIN(id) as id'), 'group_short_name')
-        ->whereNotNull('group_short_name')
-        ->groupBy('group_short_name')
-        ->orderBy('group_short_name')
-        ->get();
+        // Get distinct group short names with the smallest id for each
+        $groupShortNames = DB::table('groups')
+                ->select(DB::raw('MIN(id) as id'), 'group_short_name')
+                ->whereNotNull('group_short_name')
+                ->groupBy('group_short_name')
+                ->orderBy('group_short_name')
+                ->get();
 
         return view('admin/student/create-student', compact('standards', 'groupShortNames'));
     }
 
     public function createStudent(Request $req) {
-    $validatedData = $req->validate([
-        'register_number' => 'required|numeric',
-        'student_name' => 'required|string|min:3|max:50',
-        'mobile' => 'required|numeric|digits:10',
-        'dob' => 'required|date|before:today',
-        'academic_year' => 'required|numeric',
-        'gender' => 'required|string'
-    ], [
-        'register_number.required' => 'Register number is required.',
-        'register_number.numeric' => 'Register number must be numeric.',
-        'student_name.required' => 'Student name is required.',
-        'student_name.min' => 'Student name must be at least 3 characters.',
-        'student_name.max' => 'Student name cannot exceed 50 characters.',
-        'mobile.required' => 'Mobile number is required.',
-        'mobile.numeric' => 'Mobile number must be numeric.',
-        'mobile.digits' => 'Mobile number must be exactly 10 digits.',
-        'dob.required' => 'Date of birth is required.',
-        'dob.date' => 'Invalid date format.',
-        'dob.before' => 'Date of birth must be before today.',
-        'academic_year.required' => 'Academic year is required.',
-        'academic_year.numeric' => 'Academic year must be numeric.',
-        'gender.required' => 'Gender is required.'
-    ]);
+        $validatedData = $req->validate([
+            'register_number' => 'required|numeric',
+            'student_name' => 'required|string|min:3|max:50',
+            'mobile' => 'required|numeric|digits:10',
+            'dob' => 'required|date|before:today',
+            'academic_year' => 'required|numeric',
+            'gender' => 'required|string'
+                ], [
+            'register_number.required' => 'Register number is required.',
+            'register_number.numeric' => 'Register number must be numeric.',
+            'student_name.required' => 'Student name is required.',
+            'student_name.min' => 'Student name must be at least 3 characters.',
+            'student_name.max' => 'Student name cannot exceed 50 characters.',
+            'mobile.required' => 'Mobile number is required.',
+            'mobile.numeric' => 'Mobile number must be numeric.',
+            'mobile.digits' => 'Mobile number must be exactly 10 digits.',
+            'dob.required' => 'Date of birth is required.',
+            'dob.date' => 'Invalid date format.',
+            'dob.before' => 'Date of birth must be before today.',
+            'academic_year.required' => 'Academic year is required.',
+            'academic_year.numeric' => 'Academic year must be numeric.',
+            'gender.required' => 'Gender is required.'
+        ]);
 
-    $data = [
-        'register_number' => $req->input('register_number'),
-        'name' => strtoupper($req->input('student_name')),
-        'father_name' => strtoupper($req->input('father_name')),
-        'mother_name' => strtoupper($req->input('mother_name')),
-        'group_id' => $req->input('group_id'),
-        'mobile' => $req->input('mobile'),
-        'previous_school' => $req->input('previous_school'),
-        'aadhar_number' => $req->input('aadhar_number'),
-        'emies_number' => $req->input('emies_number'),
-        'communication_address' => $req->input('communication_address'),
-        'dob' => $req->input('dob'),
-        'standard' => $req->input('standard'),
-        'section' => $req->input('section'),
-        'gender' => $req->input('gender'),
-        'join_date' => $req->input('joined_date'),
-        'email' => $req->input('student_email'),
-        'academic_year' => $req->input('academic_year')
-    ];
+        $data = [
+            'register_number' => $req->input('register_number'),
+            'name' => strtoupper($req->input('student_name')),
+            'father_name' => strtoupper($req->input('father_name')),
+            'mother_name' => strtoupper($req->input('mother_name')),
+            'group_id' => $req->input('group_id'),
+            'mobile' => $req->input('mobile'),
+            'previous_school' => $req->input('previous_school'),
+            'aadhar_number' => $req->input('aadhar_number'),
+            'emies_number' => $req->input('emies_number'),
+            'communication_address' => $req->input('communication_address'),
+            'dob' => $req->input('dob'),
+            'standard' => $req->input('standard'),
+            'section' => $req->input('section'),
+            'gender' => $req->input('gender'),
+            'join_date' => $req->input('joined_date'),
+            'email' => $req->input('student_email'),
+            'academic_year' => $req->input('academic_year')
+        ];
 
-    $Studentexist = DB::table('students')->where('register_number', $data['register_number'])->first();
-    if ($Studentexist) {
-        return redirect()->back()->withErrors(['error' => 'This student already exists with the same register number.'])->withInput();
-    } else {
-        $result = DB::table('students')->insert($data);
-        if ($result) {
-            return redirect('/create-student');
+        $Studentexist = DB::table('students')->where('register_number', $data['register_number'])->first();
+        if ($Studentexist) {
+            return redirect()->back()->withErrors(['error' => 'This student already exists with the same register number.'])->withInput();
         } else {
-            return redirect()->back()->withErrors(['error' => 'Something went wrong while inserting.'])->withInput();
+            $result = DB::table('students')->insert($data);
+            if ($result) {
+                return redirect('/create-student');
+            } else {
+                return redirect()->back()->withErrors(['error' => 'Something went wrong while inserting.'])->withInput();
+            }
         }
     }
-}
 
-public function retriveStudent() {
-    $result['student'] = DB::table('students')
-            ->leftJoin('groups', 'students.group_id', '=', 'groups.id')
-            ->select('students.*', 'groups.group_short_name')
-            ->get();
+    public function retriveStudent() {
+        $result['student'] = DB::table('students')
+                ->leftJoin('groups', 'students.group_id', '=', 'groups.id')
+                ->select('students.*', 'groups.group_short_name')
+                ->get();
 
-    //dd($result);
-    return view('admin/student/retrive-student', $result);
-}
+        //dd($result);
+        return view('admin/student/retrive-student', $result);
+    }
 
     public function editStudent($id) {
         $result['group'] = DB::table('groups')->get();
@@ -425,10 +479,11 @@ public function retriveStudent() {
     }
 
     //teacher
-    public function createTeacher() {
+public function createTeacher() {
+    $designations = DB::table('designations')->get();
+    return view('admin.teacher.create-teacher', ['designations' => $designations]);
+}
 
-        return view('admin/teacher/create-teacher');
-    }
 
     public function saveTeacher(Request $req) {
         $validatedData = $req->validate([
@@ -456,14 +511,14 @@ public function retriveStudent() {
             'password' => sha1($req->password), // ✅ secure hashing
         ]);
 
-      
         return redirect('/create-teacher')->with('success', 'Teacher created successfully.');
     }
 
     public function retriveTeacher() {
-        $result['teacher'] = DB::table('teachers')
+        $teacher = DB::table('teachers')
                 ->get();
-        return view('admin/teacher/retrive-teacher', $result);
+        $designations=DB::table('designations')->get();
+        return view('admin/teacher/retrive-teacher', compact('teacher','designations'));
     }
 
     public function deleteTeacher($id) {
@@ -478,6 +533,7 @@ public function retriveStudent() {
 
     public function editTeacher($id) {
         $result['teacher'] = DB::table('teachers')->where('id', $id)->get();
+        $designations = DB::table('designations')->get();
         return view('admin/teacher/edit-teacher', $result);
     }
 
@@ -523,8 +579,8 @@ public function retriveStudent() {
         }
     }
 
-public function subjectAllotment(){
-            // Load all subjects
+    public function subjectAllotment() {
+        // Load all subjects
         $subjects = DB::table('subjects')
                 ->get();
         $groups = DB::table('groups')
@@ -539,53 +595,54 @@ public function subjectAllotment(){
                 ->distinct()
                 ->orderBy('standard')
                 ->get();
-    $teachers=DB::table('teachers')->get();
-    return view('admin.teacher.subject-allotment',compact('subjects', 'groups', 'classes','teachers'));
-}
-public function saveSubjectAllotments(Request $req) {
-    $validatedData = $req->validate([
-        'class_ids' => 'required|array',
-        'class_ids.*' => 'required',
-        'subject_ids' => 'required|array',
-        'subject_ids.*' => 'required',
-        'sections' => 'required|array',
-        'sections.*' => 'required',
-        'teacher_types' => 'required|array',
-        'teacher_types.*' => 'required',
-        'academic_years' => 'required|array',
-        'academic_years.*' => 'required',
-    ]);
-    $teacher_id = $req->teacher_id;
-    $class_ids = $req->class_ids;
-    $shortname_ids = $req->shortname_ids;
-    $subject_ids = $req->subject_ids;
-    $sections = $req->sections;
-    $teacher_types = $req->teacher_types;
-    $academic_years = $req->academic_years;
-
-    for ($i = 0; $i < count($class_ids); $i++) {
-        $class_id = (int) $class_ids[$i];
-        $shortname_id = $class_id > 10 ? ($shortname_ids[$i] ?? null) : null;
-        $subject_id = $subject_ids[$i] ?? null;
-        $section = $sections[$i];
-        $teacher_type = $teacher_types[$i];
-        $academic_year = $academic_years[$i];
-
-        $assignmentData = [
-            'teacher_id' => $teacher_id,
-            'standard' => $class_id,
-            'group_name_id' => $shortname_id,
-            'subject_id' => $subject_id,
-            'section' => $section,
-            'teacher_type' => $teacher_type,
-            'academic_year' => $academic_year,
-        ];
-
-        DB::table('subject_allotments')->insert($assignmentData);
+        $teachers = DB::table('teachers')->get();
+        return view('admin.teacher.subject-allotment', compact('subjects', 'groups', 'classes', 'teachers'));
     }
 
-    return redirect('/teacher-list')->with('success', 'Subject allotments saved successfully.');
-}
+    public function saveSubjectAllotments(Request $req) {
+        $validatedData = $req->validate([
+            'class_ids' => 'required|array',
+            'class_ids.*' => 'required',
+            'subject_ids' => 'required|array',
+            'subject_ids.*' => 'required',
+            'sections' => 'required|array',
+            'sections.*' => 'required',
+            'teacher_types' => 'required|array',
+            'teacher_types.*' => 'required',
+            'academic_years' => 'required|array',
+            'academic_years.*' => 'required',
+        ]);
+        $teacher_id = $req->teacher_id;
+        $class_ids = $req->class_ids;
+        $shortname_ids = $req->shortname_ids;
+        $subject_ids = $req->subject_ids;
+        $sections = $req->sections;
+        $teacher_types = $req->teacher_types;
+        $academic_years = $req->academic_years;
+
+        for ($i = 0; $i < count($class_ids); $i++) {
+            $class_id = (int) $class_ids[$i];
+            $shortname_id = $class_id > 10 ? ($shortname_ids[$i] ?? null) : null;
+            $subject_id = $subject_ids[$i] ?? null;
+            $section = $sections[$i];
+            $teacher_type = $teacher_types[$i];
+            $academic_year = $academic_years[$i];
+
+            $assignmentData = [
+                'teacher_id' => $teacher_id,
+                'standard' => $class_id,
+                'group_name_id' => $shortname_id,
+                'subject_id' => $subject_id,
+                'section' => $section,
+                'teacher_type' => $teacher_type,
+                'academic_year' => $academic_year,
+            ];
+
+            DB::table('subject_allotments')->insert($assignmentData);
+        }
+
+        return redirect('/teacher-list')->with('success', 'Subject allotments saved successfully.');
+    }
 
     public function subjectAllotmentList($teacher_id) {
         $allotments = DB::table('subject_allotments as sa')
@@ -616,38 +673,38 @@ public function saveSubjectAllotments(Request $req) {
     }
 
 // Controller
-  // Controller
-public function subjectAllotmentEdit($teacherId) {
-    // Get the teacher's details
-    $teacher = DB::table('teachers')->where('id', $teacherId)->first();
+    // Controller
+    public function subjectAllotmentEdit($teacherId) {
+        // Get the teacher's details
+        $teacher = DB::table('teachers')->where('id', $teacherId)->first();
 
-    // Load existing allotments for this teacher
-    $allotments = DB::table('subject_allotments')
-        ->where('teacher_id', $teacherId)
-        ->get();
+        // Load existing allotments for this teacher
+        $allotments = DB::table('subject_allotments')
+                ->where('teacher_id', $teacherId)
+                ->get();
 
-    // Get list of all subjects
-    $subjects = DB::table('subjects')->get();
+        // Get list of all subjects
+        $subjects = DB::table('subjects')->get();
 
-    // Get distinct classes (standards) for the Class dropdown
-    $class_list = DB::table('groups')
-        ->select('standard')
-        ->distinct()
-        ->orderBy('standard')
-        ->get();
+        // Get distinct classes (standards) for the Class dropdown
+        $class_list = DB::table('groups')
+                ->select('standard')
+                ->distinct()
+                ->orderBy('standard')
+                ->get();
 
-    // Get list of groups for the Group Name dropdown
-    $groups = DB::table('groups')
-        ->select('id', 'group_short_name')
-        ->where('group_short_name', '!=', '')
-        ->orderBy('group_short_name')
-        ->get();
+        // Get list of groups for the Group Name dropdown
+        $groups = DB::table('groups')
+                ->select('id', 'group_short_name')
+                ->where('group_short_name', '!=', '')
+                ->orderBy('group_short_name')
+                ->get();
 
-    return view('admin.teacher.edit-subject-allotment', compact('teacher', 'allotments', 'subjects', 'groups', 'class_list'));
-}
+        return view('admin.teacher.edit-subject-allotment', compact('teacher', 'allotments', 'subjects', 'groups', 'class_list'));
+    }
 
     public function subjectAllotmentUpdate(Request $req) {
-     
+
         try {
             $teacherId = $req->teacher_id;
             $allotment_ids = $req->allotment_ids ?? [];
@@ -677,13 +734,12 @@ public function subjectAllotmentEdit($teacherId) {
                         'academic_year' => $academic_years[$i],
                         'academic_year' => $academic_years[$i],
                     ];
-                   
+
                     // Update by allotment ID, so group name will also be updated correctly
-                  
-                      DB::table('subject_allotments')
-                      ->where('id', $allotment_id)
-                      ->update($data);
-                    
+
+                    DB::table('subject_allotments')
+                            ->where('id', $allotment_id)
+                            ->update($data);
                 } else {
                     // Insert new allotment
                     DB::table('subject_allotments')->insert([

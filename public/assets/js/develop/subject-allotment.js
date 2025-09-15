@@ -75,3 +75,23 @@ $(document).ready(function () {
     initTeacherForm();
 });
 
+function handleShowList() {
+    $('#show-list-btn').on('click', function (e) {
+        e.preventDefault();
+
+        let teacherSelect = $('#teacher-select');
+        let teacherId = teacherSelect.val();
+
+        if (!teacherId) {
+            $.alert({
+                title: 'Alert!',
+                content: 'Please select a teacher first.',
+                type: 'red',
+            });
+            return;
+        }
+        
+        let url =  base_url + '/subject-allotment-list/' + teacherId;
+        window.location.href = url;
+    });
+}

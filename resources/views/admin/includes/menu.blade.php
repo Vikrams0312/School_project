@@ -56,7 +56,7 @@
 <li class="menu-item {{ in_array($url_segment, ['teacher-list']) ? 'active open' : '' }}">
     <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-layout"></i>
-        <div data-i18n="Teacher">Teacher</div>
+        <div data-i18n="Teacher">Employee</div>
     </a>
     <ul class="menu-sub">
         <li class="menu-item {{ $url_segment == 'teacher-list' ? 'active' : '' }}">
@@ -85,7 +85,13 @@
             </a>
         </li>
 
-     
+             <!-- Subject List -->
+        <li class="menu-item {{ $url_segment == 'create-subject-allotment' ? 'active' : '' }}">
+            <a href="{{ url('/create-subject-allotment') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-book-open"></i>
+                <div data-i18n="Subjectallotment">Subject Allotment</div>
+            </a>
+        </li>
         <!-- Account Settings -->
         <li class="menu-item {{ in_array($url_segment, ['account-settings-account', 'account-settings-notifications', 'account-settings-connections']) ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">

@@ -40,20 +40,22 @@
                             <!-- Bordered Table -->
                             <div class="card">
                                 <h5 class="card-header">Teacher Subject Allotment list</h5>
-
+                                <div class=" text-start">
+                                @if($allotments->count() > 0)
+                                <a class="btn btn-sm btn-primary ms-4 " href="{{ url('/edit-subject-allotment/'.$allotments->first()->teacher_id) }}">
+                                    <i class="bx bx-edit-alt me-1"></i> Edit
+                                </a>
+                                <a class="btn btn-sm btn-danger ms-2 " href="{{ url('/teacher-list')}}">
+                                    <i class="bx bx-undo me-1"></i> Back
+                                </a>
+                                @endif
+                                </div>
                                 <div class="card-body">
                                     <div class="table-responsive text-nowrap">
                                         <table class="table table-bordered table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>
-                                                        @if($allotments->count() > 0)
-                                                        <a class="btn btn-sm btn-primary" href="{{ url('/edit-subject-allotment/'.$allotments->first()->teacher_id) }}">
-                                                            <i class="bx bx-edit-alt me-1"></i> Edit
-                                                        </a>
-                                                        @endif
-                                                    </th>
-
+                                                    <th>Action</th>
                                                     <th>Teacher</th>
                                                     <th>Class</th>
                                                     <th>Group</th>
@@ -64,7 +66,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($allotments as $row)
+                                                @forelse($allotments as $row)
                                                 <tr>
                                                     <td>
                                                         <a class="dropdown-item cursor-pointer" data-id="{{ $row->id }}" onclick="return deleteAllotment(this);">
@@ -80,7 +82,11 @@
                                                     <td>{{ $row->teacher_type == 'CT' ? 'Class Teacher' : 'Subject Teacher' }}</td>
                                                     <td>{{ $row->academic_year }}</td>
                                                 </tr>
-                                                @endforeach
+                                                @empty
+                                                <tr>
+                                                    <td colspan="8" class="text-center">No allotments found</td>
+                                                </tr>
+                                                @endforelse
 
                                             </tbody>
                                         </table>

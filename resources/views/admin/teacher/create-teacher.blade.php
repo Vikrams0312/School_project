@@ -8,10 +8,10 @@
     data-template="vertical-menu-template-free"
     >
     <head>
-        <title>Create Teacher</title>
+        <title>Create Employee</title>
 
         @include('admin.includes.formcss')
-        
+
     </head>
 
     <body>
@@ -34,8 +34,8 @@
                         <!-- Content -->
 
                         <div class="container-xxl flex-grow-1 container-p-y">
-                            <h4 class="fw-bold py-1 mb-1">Teacher</h4>
-                            <hr class="my-2" />
+                            <h4 class="fw-bold py-1 mb-1">Employee</h4>
+
                             <!-- Basic Layout & Basic with Icons -->
                             <div class="row">
 
@@ -43,7 +43,7 @@
                                 <div class="col-xxl">
                                     <div class="card mb-4">
                                         <div class="card-header d-flex align-items-center justify-content-between">
-                                            <h5 class="mb-0">Create New Teacher</h5>
+                                            <h5 class="mb-0">Create New Employee</h5>
 
                                         </div>
                                         <div class="card-body">
@@ -59,7 +59,7 @@
                                                 </div>
                                                 @endif
                                                 <div class="row mb-3">
-                                                    <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Teacher Name</label>
+                                                    <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname"> Name</label>
                                                     <div class="col-sm-10">
                                                         <div class="input-group input-group-merge">
                                                             <span id="basic-icon-default-fullname2" class="input-group-text"
@@ -110,7 +110,7 @@
                                                     </div>
                                                 </div>                                                
                                                 <div class="row mb-3">
-                                                    <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Teacher Email</label>
+                                                    <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname"> Email</label>
                                                     <div class="col-sm-10">
                                                         <div class="input-group input-group-merge">
                                                             <span id="basic-icon-default-fullname2" class="input-group-text"
@@ -169,18 +169,12 @@
                                                             <span id="basic-icon-default-fullname2" class="input-group-text"
                                                                   ><i class="bx bx-user"></i
                                                                 ></span>
-                                                            <input
-                                                                type="text"
-                                                                class="form-control"
-                                                                id="basic-icon-default-fullname"
-                                                                name="designation"
-                                                                required
-                                                                value="{{old('designation')}}"
-                                                                placeholder="Enter designation"
-                                                                aria-label="Enter designation"
-                                                                aria-describedby="basic-icon-default-fullname2"
-                                                                autofocus="true"
-                                                                />
+                                                            <select name="designation" class="form-select" required>
+                                                                <option value="">-- Select designation --</option>
+                                                                @foreach($designations as $designation)
+                                                                <option value="{{ $designation->id }}">{{ $designation->designation}}</option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
                                                         @error('designation')
                                                         <span class="text-danger">{{ $message }}</span>
@@ -327,7 +321,7 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
-       
+
 
     </body>
 </html>

@@ -618,3 +618,64 @@ $(document).ready(function () {
         }, 100);
     });
 });
+
+function deleteDesignation(element) {
+    var name = $(element).parents('tr').find('td:nth-child(3)').text();
+    $.confirm({
+        title: 'Delete',
+        content: 'Are you sure you want to delete the designation: <b>' + name + '</b>?',
+        useBootstrap: false,
+        buttons: {
+            delete: {
+                text: 'Delete',
+                btnClass: 'btn-primary',
+                action: function () {
+                    $('.loader').hide();
+                    setTimeout(function () {
+                        var id = $(element).attr('data-id');
+
+                        $.ajax({
+                            type: 'GET',
+                            url: base_url + '/delete-designation/' + id,
+                            async: false,
+                            success: function (resp) {
+                                $('.loader').hide();
+                                var info = typeof resp === 'object' ? resp : $.parseJSON(resp);
+
+                                if (info.status == 1) {
+                                    $.alert({
+                                        type: 'green',
+                                        icon: 'bx bx-check',
+                                        title: "Success",
+                                        content: 'Designation deleted successfully.',
+                                        buttons: {
+                                            close: {
+                                                text: 'Close',
+                                                btnClass: 'btn-primary',
+                                                action: function () {}
+                                            }
+                                        }
+                                    });
+                                    $(element).closest('tr').remove();
+                                } else {
+                                    $.alert(info.message || 'Failed to delete the designation.');
+                                }
+                            },
+                            error: function () {
+                                $('.loader').hide();
+                                $.alert('Server error occurred.');
+                            }
+                        });
+
+                    }, 400);
+                }
+            },
+            cancel: {
+                text: 'Cancel',
+                btnClass: 'btn-dark',
+                action: function () {}
+            }
+        }
+    });
+    return false;
+}

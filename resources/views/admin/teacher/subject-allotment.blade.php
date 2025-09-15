@@ -48,7 +48,7 @@
                                         <div class="card-body">
                                             <form method="POST" action="{{url('/save-subject-allotments')}}">
                                                 @csrf
-                                                
+
                                                 <!-- Teacher -->
                                                 <div class="col-md-6">
                                                     <label class="form-label">Teacher</label>
@@ -172,28 +172,11 @@
         <!-- Core JS -->
         @include('admin.includes.formjs')
         <script src="{{url('public/assets/js/develop/subject-allotment.js')}}" type="text/javascript"></script>
-
+        <script>
+        $(document).ready(function () {
+            handleShowList();
+        });
+        </script>
     </body>
-
-
-    <script>
-    document.getElementById('show-list-btn').addEventListener('click', function (e) {
-        e.preventDefault();
-
-        let teacherSelect = document.getElementById('teacher-select');
-        let teacherId = teacherSelect.value;
-
-        if (!teacherId) {
-            alert('Please select a teacher first.');
-            return;
-        }
-
-        let url = '{{ url("/subject-allotment-list") }}/' + teacherId;
-        window.location.href = url;
-    });
-    </script>
-
-
-
 </html>
 

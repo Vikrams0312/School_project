@@ -36,9 +36,15 @@
 
                         <div class="container-xxl flex-grow-1 container-p-y">
                             <h4 class="fw-bold py-2 mb-2">Teacher List </h4>
-
-                          
-
+                            <div class="mb-2 col-md-4 d-flex">
+                            <select name="designation" class="form-select" required>
+                                <option value="">-- Select designation --</option>
+                                @foreach($designations as $designation)
+                                <option value="{{ $designation->id }}">{{ $designation->designation}}</option>
+                                @endforeach
+                            </select>
+                                <button class="btn btn-sm btn-primary ms-2">Submit</button>
+                                </div>
                             <!-- Bordered Table -->
                             <div class="card">
                                 <h5 class="card-header">Teacher list</h5>
@@ -62,8 +68,8 @@
                                                     <th>Qualification</th>
                                                     <th>Designation</th>
                                                     <th>Join Date</th>
-                                                   
-                                                    
+
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -102,8 +108,8 @@
                                                     <td>{{$d->qualification}}</td>
                                                     <td>{{$d->designation}}</td>
                                                     <td>{{$d->join_date}}</td>                                                    
-                                                    
-                                                   
+
+
                                                 </tr>
                                                 @endforeach
                                                 @else
