@@ -1,6 +1,6 @@
 @php
-    use Illuminate\Support\Str;
-    $url_segment = Request::segment(1);
+use Illuminate\Support\Str;
+$url_segment = Request::segment(1);
 @endphp
 
 
@@ -40,36 +40,27 @@
                         <div data-i18n="Without menu">Student List</div>
                     </a>
                 </li>
-                <li class="menu-item {{ $url_segment == 'studentType' ? 'active' : '' }}">
-                    <a href="{{ url('/studentType') }}" class="menu-link">
-                        <div data-i18n="Without navbar">Student Type</div>
-                    </a>
-                </li>
-                <li class="menu-item {{ $url_segment == 'departmentList' ? 'active' : '' }}">
-                    <a href="{{ url('/departmentList') }}" class="menu-link">
-                        <div data-i18n="Container">Department List</div>
+               
+            </ul>
+        </li>
+        <!-- Teacher List -->
+        <li class="menu-item {{ in_array($url_segment, ['teacher-list']) ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-layout"></i>
+                <div data-i18n="Teacher">Employee</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ $url_segment == 'teacher-list' ? 'active' : '' }}">
+                    <a href="{{ url('/teacher-list') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user"></i>
+                        <div data-i18n="teacher-list">Teacher List</div>
                     </a>
                 </li>
             </ul>
         </li>
-<!-- Teacher List -->
-<li class="menu-item {{ in_array($url_segment, ['teacher-list']) ? 'active open' : '' }}">
-    <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-layout"></i>
-        <div data-i18n="Teacher">Employee</div>
-    </a>
-    <ul class="menu-sub">
-        <li class="menu-item {{ $url_segment == 'teacher-list' ? 'active' : '' }}">
-            <a href="{{ url('/teacher-list') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div data-i18n="teacher-list">Teacher List</div>
-            </a>
-        </li>
-    </ul>
-</li>
 
- <!-- Teacher List -->
-          
+        <!-- Teacher List -->
+
         <li class="menu-item {{ $url_segment == 'group-list' ? 'active' : '' }}">
             <a href="{{ url('/group-list') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-book"></i>
@@ -85,11 +76,18 @@
             </a>
         </li>
 
-             <!-- Subject List -->
+        <!-- Subject List -->
         <li class="menu-item {{ $url_segment == 'create-subject-allotment' ? 'active' : '' }}">
             <a href="{{ url('/create-subject-allotment') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-book-open"></i>
                 <div data-i18n="Subjectallotment">Subject Allotment</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ $url_segment == 'designation-list' ? 'active' : '' }}">
+            <a href="{{ url('/designation-list') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-id-card"></i>
+                <div data-i18n="Designation">Designation Lists</div>
             </a>
         </li>
         <!-- Account Settings -->

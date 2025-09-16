@@ -270,10 +270,10 @@
                                                                   ><i class="bx bx-calendar"></i
                                                                 ></span>
                                                             <input
-                                                                type="date"
-                                                                class="form-control"
-                                                                id="basic-icon-default-fullname"
-                                                                value="{{old('join_date')}}"
+                                                                type="text"
+                                                                class="form-control join_date"
+                                                                id="join_date"
+                                                                
                                                                 name="join_date"
                                                                 required
                                                                 placeholder="dd-mm-yyyy"
@@ -321,7 +321,6 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
-
 
     </body>
 </html>

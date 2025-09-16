@@ -58,9 +58,7 @@
                                                     </ul>
                                                 </div>
                                                 @endif
-                                                @php 
-                                                ($d = $teacher[0]);
-                                                @endphp
+
                                                 <div class="row mb-3 d-none">
                                                     <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Id</label>
                                                     <div class="col-sm-10">
@@ -71,7 +69,7 @@
                                                                 type="text"
                                                                 class="form-control"
                                                                 id="basic-icon-default-fullname"
-                                                                value="{{$d->id}}"
+                                                                value="{{$teacher->id}}"
                                                                 name="id"
                                                                 readonly
                                                                 aria-label="John Doe"
@@ -93,7 +91,7 @@
                                                                 id="basic-icon-default-fullname"
                                                                 name="teacher_name"
                                                                 required
-                                                                value="{{$d->name}}"
+                                                                value="{{$teacher->name}}"
                                                                 placeholder="Enter teacher name "
                                                                 aria-label="Enter teacher name "
                                                                 aria-describedby="basic-icon-default-fullname2"
@@ -119,7 +117,7 @@
                                                                 id="basic-icon-default-fullname"
                                                                 name="qualification"
                                                                 required
-                                                                value="{{$d->qualification}}"
+                                                                value="{{$teacher->qualification}}"
                                                                 placeholder="Enter qualification"
                                                                 aria-label="Enter qualification"
                                                                 aria-describedby="basic-icon-default-fullname2"
@@ -144,7 +142,7 @@
                                                                 id="basic-icon-default-fullname"
                                                                 name="teacher_email"
                                                                 required
-                                                                value="{{$d->email}}"
+                                                                value="{{$teacher->email}}"
                                                                 placeholder="Enter teacher email"
                                                                 aria-label="Enter teacher email"
                                                                 aria-describedby="basic-icon-default-fullname2"
@@ -164,25 +162,23 @@
                                                             <span id="basic-icon-default-fullname2" class="input-group-text"
                                                                   ><i class="bx bx-user"></i
                                                                 ></span>
-                                                            <input
-                                                                type="text"
-                                                                class="form-control"
-                                                                id="basic-icon-default-fullname"
-                                                                name="designation"
-                                                                required
-                                                                value="{{$d->designation}}"
-                                                                placeholder="Enter designation"
-                                                                aria-label="Enter designation"
-                                                                aria-describedby="basic-icon-default-fullname2"
-                                                                autofocus="true"
-                                                                />
+                                                            <select name="designation" class="form-select" required aria-label="Select designation">
+                                                                <option value="">-- Select designation --</option>
+                                                                @foreach($designations as $desig)
+                                                                <option value="{{ $desig->id }}" {{ $teacher->designation_id == $desig->id ? 'selected' : '' }}>
+                                                                    {{ $desig->designation }}
+                                                                </option>
+                                                                @endforeach
+                                                            </select>
+
+
                                                         </div>
                                                         @error('designation')
                                                         <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="row mb-3">
                                                     <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Experience</label>
                                                     <div class="col-sm-10">
@@ -196,7 +192,7 @@
                                                                 id="basic-icon-default-fullname"
                                                                 name="experience"
                                                                 required
-                                                                value="{{$d->experience}}"
+                                                                value="{{$teacher->experience}}"
                                                                 placeholder="Enter experience"
                                                                 aria-label="Enter experience"
                                                                 aria-describedby="basic-icon-default-fullname2"
@@ -208,7 +204,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="row mb-3">
                                                     <label class="col-sm-2 col-form-label" for="basic-icon-default-fullname">Previous Work Station</label>
                                                     <div class="col-sm-10">
@@ -222,7 +218,7 @@
                                                                 id="basic-icon-default-fullname"
                                                                 name="previous_work_station"
                                                                 required
-                                                                value="{{$d->previous_work_station}}"
+                                                                value="{{$teacher->previous_work_station}}"
                                                                 placeholder="Enter previous work station"
                                                                 aria-label="Enter previous work station"
                                                                 aria-describedby="basic-icon-default-fullname2"
@@ -248,7 +244,7 @@
                                                                 id="mobileno"
                                                                 name="mobile"
                                                                 onkeyup="return numberValidation(this, 10)"
-                                                                value="{{$d->mobile}}"
+                                                                value="{{$teacher->mobile}}"
                                                                 required=""
                                                                 placeholder="Enter mobile"
                                                                 aria-label="Enter mobile"
@@ -270,13 +266,13 @@
                                                                   ><i class="bx bx-calendar"></i
                                                                 ></span>
                                                             <input
-                                                                type="date"
-                                                                class="form-control"
+                                                                type="text"
+                                                                class="form-control join_date"
                                                                 id="basic-icon-default-fullname"
-                                                                value="{{$d->join_date}}"
+                                                                value="{{$teacher->join_date}}"
                                                                 name="join_date"
                                                                 required
-                                                                placeholder="Enter Join Date"
+                                                                placeholder="dd-mm-yyyy"
                                                                 aria-label="Enter Join Date"
                                                                 aria-describedby="basic-icon-default-fullname2"                                                               
                                                                 />
@@ -286,7 +282,7 @@
                                                         @enderror
                                                     </div>
                                                 </div> 
-                                               
+
                                                 <div class="row justify-content-end">
                                                     <div class="col-sm-10">
                                                         <button type="submit" class="btn btn-info">Update</button>
@@ -320,7 +316,7 @@
 
         <!-- Core JS -->
         @include('admin.includes.formjs')
-        
+
     </body>
 </html>
 

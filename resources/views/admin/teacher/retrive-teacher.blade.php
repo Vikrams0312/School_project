@@ -35,19 +35,25 @@
                         <!-- Content -->
 
                         <div class="container-xxl flex-grow-1 container-p-y">
-                            <h4 class="fw-bold py-2 mb-2">Teacher List </h4>
+                            <h4 class="fw-bold py-2 mb-2">Employee List </h4>
                             <div class="mb-2 col-md-4 d-flex">
-                            <select name="designation" class="form-select" required>
-                                <option value="">-- Select designation --</option>
-                                @foreach($designations as $designation)
-                                <option value="{{ $designation->id }}">{{ $designation->designation}}</option>
-                                @endforeach
-                            </select>
-                                <button class="btn btn-sm btn-primary ms-2">Submit</button>
-                                </div>
+                                <form action="{{ url('/teacher-list') }}" method="GET" class="mb-2 d-flex">
+                                    @csrf
+                                    <select name="designation" class="form-select" required>
+                                        <option value="">-- Select designation --</option>
+                                        @foreach($designations as $designation)
+                                        <option value="{{ $designation->id }}" {{ request('designation') == $designation->id ? 'selected' : '' }}>
+                                            {{ $designation->designation }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                    <button class="btn btn-sm btn-primary ms-2" type="submit">Submit</button>
+                                </form>
+
+                            </div>
                             <!-- Bordered Table -->
                             <div class="card">
-                                <h5 class="card-header">Teacher list</h5>
+                                <h5 class="card-header">Employee list</h5>
                                 <div class="card-body">
                                     <div class="table-responsive text-nowrap">
                                         <table class="table table-bordered">
@@ -106,7 +112,7 @@
                                                     <td>{{$d->experience}}</td>
                                                     <td>{{$d->previous_work_station}}</td>
                                                     <td>{{$d->qualification}}</td>
-                                                    <td>{{$d->designation}}</td>
+                                                    <td>{{$d->designation_name}}</td>
                                                     <td>{{$d->join_date}}</td>                                                    
 
 

@@ -415,7 +415,7 @@ class AdminController extends Controller {
             'dob.required' => 'Date of birth is required.',
             'dob.date' => 'Invalid date format.',
             'dob.before' => 'Date of birth must be before today.',
-            'joined_at.date' => 'Invalid date format.',
+            'joined_at.' => 'Invalid date format.',
             'joined_at.before' => 'Date of joining must be before today.',
             'student_email.required' => 'Email is required.',
             'student_email.email' => 'Invalid email format.'
@@ -479,11 +479,10 @@ class AdminController extends Controller {
     }
 
     //teacher
-public function createTeacher() {
-    $designations = DB::table('designations')->get();
-    return view('admin.teacher.create-teacher', ['designations' => $designations]);
-}
-
+    public function createTeacher() {
+        $designations = DB::table('designations')->get();
+        return view('admin.teacher.create-teacher', ['designations' => $designations]);
+    }
 
     public function saveTeacher(Request $req) {
         $validatedData = $req->validate([
@@ -491,7 +490,7 @@ public function createTeacher() {
             'experience' => 'required|string|min:1|max:50',
             'previous_work_station' => 'required|string|min:3|max:50',
             'qualification' => 'required|string|min:1|max:50',
-            'designation' => 'required|string|min:1|max:50',
+            'designation' => 'required|int|min:1|max:50',
             'mobile' => 'required|numeric|digits:10',
             'password' => 'required|string|min:6',
             'join_date' => 'required|date',
@@ -505,7 +504,7 @@ public function createTeacher() {
             'experience' => $req->experience,
             'previous_work_station' => $req->previous_work_station,
             'qualification' => $req->qualification,
-            'designation' => $req->designation,
+            'designation_id' => $req->designation,
             'join_date' => $req->join_date,
             'email' => $req->teacher_email,
             'password' => sha1($req->password), // ✅ secure hashing
@@ -514,11 +513,21 @@ public function createTeacher() {
         return redirect('/create-teacher')->with('success', 'Teacher created successfully.');
     }
 
-    public function retriveTeacher() {
-        $teacher = DB::table('teachers')
-                ->get();
-        $designations=DB::table('designations')->get();
-        return view('admin/teacher/retrive-teacher', compact('teacher','designations'));
+    public function retriveTeacher(Request $request) {
+        $designation_id = $request->input('designation');
+
+        $query = DB::table('teachers')
+                ->leftJoin('designations', 'teachers.designation_id', '=', 'designations.id')
+                ->select('teachers.*', 'designations.designation as designation_name');
+
+        if ($designation_id) {
+            $query->where('teachers.designation_id', $designation_id);
+        }
+
+        $teacher = $query->get();
+        $designations = DB::table('designations')->get();
+
+        return view('admin.teacher.retrive-teacher', compact('teacher', 'designations'));
     }
 
     public function deleteTeacher($id) {
@@ -532,9 +541,9 @@ public function createTeacher() {
     }
 
     public function editTeacher($id) {
-        $result['teacher'] = DB::table('teachers')->where('id', $id)->get();
+        $teacher = DB::table('teachers')->where('id', $id)->first();
         $designations = DB::table('designations')->get();
-        return view('admin/teacher/edit-teacher', $result);
+        return view('admin.teacher.edit-teacher', compact('teacher', 'designations'));
     }
 
     public function updateTeacher(Request $req) {
@@ -544,7 +553,7 @@ public function createTeacher() {
             'experience' => 'required|string|min:1|max:50',
             'previous_work_station' => 'required|string|min:3|max:50',
             'qualification' => 'required|string|min:1|max:50',
-            'designation' => 'required|string|min:3|max:50',
+            'designation' => 'required|integer',
             'mobile' => 'required|numeric|digits:10'
                 ], [
             // Custom error messages
@@ -562,7 +571,7 @@ public function createTeacher() {
             'experience' => $experience,
             'previous_work_station' => $previous_work_station,
             'qualification' => $qualification,
-            'designation' => $designation,
+            'designation_id' => $designation,
             'join_date' => $join_date,
             'email' => $teacher_email,
         ];

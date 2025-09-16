@@ -679,3 +679,10 @@ function deleteDesignation(element) {
     });
     return false;
 }
+function applyDateMask() {
+    $('.join_date').inputmask('99-99-9999', { placeholder: "dd-mm-yyyy" });
+}
+
+$(document).ready(function(){
+    applyDateMask();
+});

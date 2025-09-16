@@ -399,13 +399,13 @@
                                                                   ><i class="bx bx-calendar"></i
                                                                 ></span>
                                                             <input
-                                                                type="date"
-                                                                class="form-control"
-                                                                id="basic-icon-default-fullname"
+                                                                type="text"
+                                                                class="form-control join_date"
+                                                                
                                                                 value="{{old('dob')}}"
                                                                 name="dob"
                                                                 required
-                                                                placeholder="Enter dob"
+                                                                placeholder="dd-mm-yyyy"
                                                                 aria-label="Enter dob"
                                                                 aria-describedby="basic-icon-default-fullname2"                                                               
                                                                 />
@@ -450,13 +450,13 @@
                                                                   ><i class="bx bx-calendar"></i
                                                                 ></span>
                                                             <input
-                                                                type="date"
-                                                                class="form-control"
-                                                                id="basic-icon-default-fullname"
+                                                                type="text"
+                                                                class="form-control join_date"
+                                                                id="join_date"
                                                                 value="{{old('joined_date')}}"
                                                                 name="joined_date"
                                                                 required
-                                                                placeholder="Enter Joined Date"
+                                                                placeholder="dd-mm-yyyy"
                                                                 aria-label="Enter Joined Date"
                                                                 aria-describedby="basic-icon-default-fullname2"                                                               
                                                                 />
