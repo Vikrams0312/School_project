@@ -591,20 +591,25 @@ class AdminController extends Controller {
     public function subjectAllotment() {
         // Load all subjects
         $subjects = DB::table('subjects')
+                ->selectRaw('MIN(id) as id,subject_name')
+                ->groupBy('subject_name')
                 ->get();
         $groups = DB::table('groups')
-                ->select('id', 'group_short_name')
+                ->selectRaw('MIN(id) as id, group_short_name')
                 ->where('group_short_name', '!=', '')
-                ->distinct()
+                ->groupBy('group_short_name')
                 ->orderBy('group_short_name')
                 ->get();
+
         // Get distinct shortnames with their IDs
         $classes = DB::table('groups')
                 ->select('standard')
                 ->distinct()
                 ->orderBy('standard')
                 ->get();
-        $teachers = DB::table('teachers')->get();
+        $teachers = DB::table('teachers')
+                ->whereIn('designation_id', [2,1])
+                ->get();
         return view('admin.teacher.subject-allotment', compact('subjects', 'groups', 'classes', 'teachers'));
     }
 
@@ -701,13 +706,18 @@ class AdminController extends Controller {
                 ->distinct()
                 ->orderBy('standard')
                 ->get();
-
-        // Get list of groups for the Group Name dropdown
+        $subjects = DB::table('subjects')
+                ->selectRaw('MIN(id) as id,subject_name')
+                ->groupBy('subject_name')
+                ->get();
         $groups = DB::table('groups')
-                ->select('id', 'group_short_name')
+                ->selectRaw('MIN(id) as id, group_short_name')
                 ->where('group_short_name', '!=', '')
+                ->groupBy('group_short_name')
                 ->orderBy('group_short_name')
                 ->get();
+        // Get list of groups for the Group Name dropdown
+
 
         return view('admin.teacher.edit-subject-allotment', compact('teacher', 'allotments', 'subjects', 'groups', 'class_list'));
     }
